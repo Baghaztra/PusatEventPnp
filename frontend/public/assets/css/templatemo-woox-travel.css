@@ -133,14 +133,21 @@ body {
   color: #fff;
 }
 
-.text-button a {
+.text-button{
   font-size: 14px;
   color: #22b3c1;
   font-weight: 500;
   transition: all .3s;
 }
+.text-button:hover{
+  font-size: 14px;
+  color: #22b3c1;
+  font-weight: 500;
+  margin-left: 10px;
+  transition: all .3s;
+}
 
-.text-button a i {
+.text-button i {
   margin-left: 5px;
   transition: all .3s;
 }
@@ -712,7 +719,7 @@ Banner Style
 #section-1 {
   margin-top: 0px;
   height: 100vh;
-  min-height: 700px;
+  height: 100vh;
   color: #fff;
   background-color: #222;
   position: relative;
@@ -794,12 +801,12 @@ Banner Style
   height: 100%;
   box-sizing: border-box;
 }
-#section-1 .content-slider .slider .banner .banner-inner-wrapper .main-caption {
+/* #section-1 .content-slider .slider .banner .banner-inner-wrapper .main-caption {
   position: absolute;
   width: 100%;
   top: 40%;
   transform: translateY(-50%);
-}
+} */
 #section-1 .content-slider .slider .banner .banner-inner-wrapper h2 {
   font-weight: 500;
   font-size: 20px;
