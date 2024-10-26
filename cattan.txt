@@ -1,0 +1,31 @@
+Virtual environment:
+
+python -m venv .venv
+
+aktifkan:
+.venv\Scripts\activate
+
+matikan:
+deactivate
+
+cek dependensi:
+pip freeze
+
+database
+pip install flask-sqlalchemy flask-migrate pymysql
+
+migrate:
+flask db init
+
+setiap ada perubahan:
+flask db migrate
+
+flask db upgrade
+
+program kali ini:
+python migrate-fresh.py
+
+python seeder.py
+
+
+password
