@@ -4,19 +4,18 @@
       <div class="container">
         <div class="row">
           <div class="col-12">
-            <nav class="main-nav">
+            <nav class="main-nav d-flex">
               <!-- ***** Logo Start ***** -->
-              <a href="index.html" class="logo">
-                <img src="assets/images/logo.png" alt="" />
+              <a href="">
+                <img src="@/assets/logo.png" alt="" style="height: 4rem; width: auto;"/>
               </a>
               <!-- ***** Logo End ***** -->
               <!-- ***** Menu Start ***** -->
               <ul class="nav">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="deals.html">Deals</a></li>
-                <li><a href="reservation.html">Reservation</a></li>
-                <li><a href="reservation.html">Book Yours</a></li>
+                <li><router-link to="/home" exact-active-class="active" exact>Home</router-link></li>
+                <li><router-link to="/about" exact-active-class="active" exact>About</router-link></li>
+                <li><router-link to="/otrher" exact-active-class="active" exact>Apa kek</router-link></li>
+                <li><router-link to="/otrher" exact-active-class="active" exact>Yang lain</router-link></li>
               </ul>
               <a class="menu-trigger">
                 <span>Menu</span>

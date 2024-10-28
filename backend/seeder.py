@@ -79,6 +79,18 @@ def seed_comments(n=20):
         db.session.add(comment)
     db.session.commit()
 
+def seed_images(n=20):
+    print(f"Seeding {n} images...")
+    events = Event.query.all()
+    for _ in range(n):
+        image = Image(
+            event_id=random.choice(events).id,
+            path= "https://picsum.photos/seed/picsum/200/300",
+            created_at=datetime.now()
+        )
+        db.session.add(image)
+    db.session.commit()
+
 def run_seeders():
     with app.app_context():
         seed_users()
@@ -86,6 +98,7 @@ def run_seeders():
         seed_events()
         seed_likes()
         seed_comments()
+        seed_images(50)
         print("Seeding complete.")
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@ const routes = [
     component: LandingPage
   },
   {
-    path: '/',
+    path: '/home',
     name: 'HomePage',
     component: HomeView
   },
