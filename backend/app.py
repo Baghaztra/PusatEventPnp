@@ -17,6 +17,7 @@ def create_app():
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
     jwt = JWTManager(app)
 
+    app.secret_key = 'pusatevent_asik'
     CORS(app)
     db.init_app(app)
 

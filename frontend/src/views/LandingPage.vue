@@ -18,7 +18,7 @@
                 <h1>Pusat Event Politeknik</h1>
                 <div class="d-flex justify-content-center flex-column">
                     <div class="main-button d-flex justify-content-center mb-3">
-                      <router-link to="/home">Login!</router-link>
+                      <router-link to="/login">Login!</router-link>
                     </div>
                     <router-link class="text-button" to="/register">dont have any account?</router-link>
                     <span>

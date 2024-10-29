@@ -125,6 +125,8 @@ export default {
   created() {
     this.fetchEvents();
   },
-  mounted() {},
+  mounted() {
+    document.title = 'Pusat Event Politeknik';
+  },
 };
 </script>

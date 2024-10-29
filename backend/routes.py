@@ -1,4 +1,4 @@
-from flask import request, jsonify, session, abort, redirect
+from flask import request, jsonify, session, abort, redirect, make_response
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models import *
@@ -50,7 +50,7 @@ def register_route(app, db):
         if user and user.verify_password(password):
             # Buat JWT token dengan informasi user_id
             access_token = create_access_token(identity={'user_id': user.id, 'username': user.username})
-            return jsonify({"message": "Invalid email or password.", "token":access_token}), 200
+            return jsonify({"message": "Login success", "token":access_token}), 200
         else:
             return jsonify({"message": "Invalid email or password."}), 401
     
@@ -101,13 +101,16 @@ def register_route(app, db):
             db.session.commit()
         
         access_token = create_access_token(identity={'user_id': user.id, 'username': user.username})
-        return jsonify({"message": "Login berhasil", "token": access_token}), 200
+        # return jsonify({"message": "Login berhasil", "token": access_token}), 200
+        response = make_response(redirect("http://localhost:8080/home"))  # Redirect ke aplikasi Vue
+        response.set_cookie("access_token", access_token, httponly=True)  # Simpan token dalam cookie
+        return response
     
     @app.route('/logout')
     def logout():
         session.clear()
-        # return jsonify({"message": "Logout berhasil"}), 200
-        return redirect("/")
+        return jsonify({"message": "Logout berhasil"}), 200
+        # return redirect("/")
 
 
 # EVENTS ==========================================================================
