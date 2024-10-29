@@ -4,12 +4,13 @@ from app import db
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    google_id = db.Column(db.Integer, nullable=True)
     username = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    _password = db.Column(db.String(255), nullable=True)
     status = db.Column(db.String(50), default='Active')
     profile_picture = db.Column(db.String(255))
-    role = db.Column(db.String(50))
+    role = db.Column(db.String(50), default='user')
     created_at = db.Column(db.DateTime)
 
     @property
@@ -18,10 +19,10 @@ class User(db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self._password = generate_password_hash(password)
 
     def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self._password, password)
 
 class EventOrganizer(db.Model):
     __tablename__ = 'event_organizers'

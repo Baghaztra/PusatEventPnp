@@ -1,23 +1,23 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from flask_cors import CORS
 
 db = SQLAlchemy()
 
 def create_app():
-    app = Flask(__name__, template_folder='templates')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/pusat_event'
-    app.config['SECRET_KEY'] = 'pusatevent_asik'  # Ganti dengan kunci rahasia yang aman
-    app.config['JWT_SECRET_KEY'] = 'jawet'  # Kunci ini digunakan untuk JWT
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Token kedaluwarsa dalam 1 jam
+    app = Flask(__name__)
 
+    # JWT
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/pusat_event'
+    app.config['SECRET_KEY'] = 'pusatevent_asik' 
+    app.config['JWT_SECRET_KEY'] = 'jawet' 
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
     jwt = JWTManager(app)
 
     CORS(app)
-
     db.init_app(app)
 
     from routes import register_route
