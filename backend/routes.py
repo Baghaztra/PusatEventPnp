@@ -112,6 +112,25 @@ def register_route(app, db):
         return jsonify({"message": "Logout berhasil"}), 200
         # return redirect("/")
 
+    @app.route('/profile', methods=['GET'])
+    @jwt_required()  # endpoint ini membutuhkan token untuk mengakses
+    def get_profile():
+        # Ambil user_id dari token JWT
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+        
+        # Cari user di database berdasarkan user_id
+        user = User.query.get(user_id)
+        
+        # Jika user ditemukan, kembalikan data profilnya
+        if user:
+            return jsonify({
+                "username": user.username,
+                "profile_picture": user.profile_picture  # pastikan field ini ada di model User
+            }), 200
+        else:
+            return jsonify({"message": "User not found."}), 404
+
 
 # EVENTS ==========================================================================
     @app.route('/event-latest')

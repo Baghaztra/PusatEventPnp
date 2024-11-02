@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <PublicStyle/>
     <NavbarComponent />
     <!-- ***** Main Banner Area Start ***** -->
     <div class="visit-country bg-white text-dark">
@@ -75,12 +76,15 @@
     </div>
     <!-- ***** Main Banner Area End ***** -->
     <FooterComponent />
+    <PublicScripts/>
   </div>
 </template>
 
 <script>
 import FooterComponent from "@/components/public/FooterComponent.vue";
 import NavbarComponent from "@/components/public/NavbarComponent.vue";
+import PublicScripts from "@/components/public/PublicScripts.vue";
+import PublicStyle from "@/components/public/PublicStyle.vue";
 import axios from "axios";
 
 export default {
@@ -88,6 +92,8 @@ export default {
   components: {
     NavbarComponent,
     FooterComponent,
+    PublicStyle,
+    PublicScripts
   },
   data() {
     return {

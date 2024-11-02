@@ -825,7 +825,8 @@ Banner Style
   transition: 0.3s;
 }
 #section-1 .content-slider .slider #top-banner-1 {
-  background: url('../images/banner-01.jpg') no-repeat center center;
+  background: linear-gradient(rgba(0, 0, 0, .75), rgba(0, 0, 0, 0.75)), 
+              url('../images/MG_7004-copy-02.jpg') no-repeat center center;
   background-size: cover;
 }
 #section-1 .content-slider .slider #top-banner-2 {

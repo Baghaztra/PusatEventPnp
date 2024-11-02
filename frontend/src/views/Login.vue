@@ -1,5 +1,6 @@
 <template>
   <div class="home" style="height: 100vh">
+    <PublicStyle/>
     <!-- ***** Main Banner Area Start ***** -->
     <section id="section-1">
       <div class="content-slider">
@@ -80,15 +81,21 @@
       </div>
     </section>
     <!-- ***** Main Banner Area End ***** -->
+    <PublicScripts/>
   </div>
 </template>
 
 <script>
+import PublicScripts from "@/components/public/PublicScripts.vue";
+import PublicStyle from "@/components/public/PublicStyle.vue";
 import axios from "axios";
 
 export default {
   name: "LoginPage",
-  components: {},
+  components: {
+    PublicScripts,
+    PublicStyle
+  },
   data() {
     return {
       email: "",

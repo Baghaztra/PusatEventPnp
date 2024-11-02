@@ -1,4 +1,5 @@
 <template>
+  <PublicStyle/>
   <div class="home" style="height: 100vh">
     <!-- ***** Main Banner Area Start ***** -->
     <section id="section-1">
@@ -32,13 +33,20 @@
       </div>
     </section>
     <!-- ***** Main Banner Area End ***** -->
+     <PublicScripts/>
   </div>
 </template>
 
 <script>
+import PublicScripts from '@/components/public/PublicScripts.vue';
+import PublicStyle from '@/components/public/PublicStyle.vue';
+
 export default {
   name: "LandingPage",
-  components: {},
+  components: {
+    PublicStyle,
+    PublicScripts
+  },
   methods: {},
   mounted() {
     document.title = 'Pusat Event Politeknik';
