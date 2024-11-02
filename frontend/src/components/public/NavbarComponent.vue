@@ -11,33 +11,25 @@
               </a>
               <!-- ***** Logo End ***** -->
               <!-- ***** Menu Start ***** -->
-              <ul class="nav align-item-left">
+              <ul class="nav">
                 <li>
                   <router-link to="/home" exact-active-class="active" exact>Home</router-link>
                 </li>
                 <li>
                   <router-link to="/about" exact-active-class="active" exact>About</router-link>
                 </li>
-                <li>
-                  <router-link to="/other" exact-active-class="active" exact>Apa kek</router-link>
-                </li>
                 <template v-if="!isLoggedIn">
                   <router-link to="/login" class="btn btn-primary">Login</router-link>
                 </template>
                 <template v-else>
-                  <div class="dropdown">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <img
-                        :src="profilePicture || 'https://github.com/mdo.png'"
-                        alt=""
-                        style="width: 32px !important; height: 32px !important;"
-                        class="rounded-circle me-2" />
-                      Dropdown link
-                    </a>
-
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#" @click.prevent="logout">Sign out</a></li>
-                    </ul>
+                  <div class="d-flex align-items-center">
+                    <img
+                      :src="profilePicture || 'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'"
+                      alt="Profile Picture"
+                      style="width: 32px; height: 32px;"
+                      class="rounded-circle me-2" />
+                    <span>Nama User</span>
+                    <a class="dropdown-item" href="#" @click.prevent="logout">Sign out</a>
                   </div>
                 </template>
               </ul>
