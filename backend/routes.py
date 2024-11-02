@@ -7,14 +7,17 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 import google.auth.transport.requests
 import cachecontrol
+from dotenv import load_dotenv
 import requests as req
 import pathlib
 import os
 
 
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+load_dotenv()
 
-GOOGLE_CLIENT_ID = "27391848126-bga8as1o47h7jhhfduv9vi5hm3p7035n.apps.googleusercontent.com"
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = os.getenv("OAUTHLIB_INSECURE_TRANSPORT")
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
 flow = Flow.from_client_secrets_file(
