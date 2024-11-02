@@ -7,7 +7,8 @@ export default {
   name: "PublicStyle",
   mounted() {
     const styles = [
-      "/vendor/bootstrap/css/bootstrap.min.css",
+      // "/vendor/bootstrap/css/bootstrap.min.css",
+      "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css",
       "/assets/css/fontawesome.css",
       "/assets/css/templatemo-woox-travel.css",
       "/assets/css/owl.css",

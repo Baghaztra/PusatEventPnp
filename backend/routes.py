@@ -135,19 +135,17 @@ def register_route(app, db):
 # EVENTS ==========================================================================
     @app.route('/event-latest')
     def event_latest():
-        # Mendapatkan parameter halaman (page) dari query string, default 1 jika tidak ada
         page = request.args.get('page', 1, type=int)
-        # Mendapatkan parameter jumlah item per halaman (per_page) dari query string, default 5
         per_page = request.args.get('per_page', 5, type=int)
 
-        # Mengambil data event secara paginated
         events = Event.query.order_by(Event.created_at.desc()).paginate(page=page, per_page=per_page)
 
-        # Mengonversi data event ke dalam list dictionary
         events_list = [
             {
                 "id": event.id,
                 "title": event.title,
+                "eo": event.event_organizer.username,
+                "eo_id": event.event_organizer.id,
                 "images": [image.path for image in event.images],
                 "description": event.description,
                 "event_date": event.start_date,

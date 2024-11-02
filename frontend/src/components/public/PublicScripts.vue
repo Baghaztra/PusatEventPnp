@@ -10,8 +10,10 @@ export default {
   mounted() {
     // Muat file JavaScript eksternal
     const scripts = [
-      "/vendor/jquery/jquery.min.js",
-      "/vendor/bootstrap/js/bootstrap.min.js",
+      // "/vendor/jquery/jquery.min.js",
+      // "/vendor/popper.js",
+      // "/vendor/bootstrap/js/bootstrap.min.js",
+      "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js",
       "/assets/js/isotope.min.js",
       "/assets/js/owl-carousel.js",
       "/assets/js/tabs.js",

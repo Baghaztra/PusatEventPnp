@@ -1,24 +1,22 @@
 <template>
-    <div class="bg-primary">
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+  <div>
+    <header class="header-admin d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom fixed-top bg-primary">
       <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
-        <span class="fs-4">Simple header</span>
+        <span class="fs-4 ms-3 text-white">Admin Pusat Event PNP</span>
       </a>
-
-      <ul class="nav nav-pills">
-        <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Home</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">About</a></li>
-      </ul>
     </header>
   </div>
+  <div style="margin-top: 70px;"></div> <!-- Spacer untuk menghindari konten tertutup header -->
 </template>
 
-<script>
-export default {
-    name: "HeaderAdmin"
+<style scoped>
+.header-admin {
+  margin-left: 280px;
 }
-</script>
+
+@media (max-width: 768px) {
+  .header-admin {
+    margin-left: 0;
+  }
+}
+</style>

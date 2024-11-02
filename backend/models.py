@@ -64,6 +64,7 @@ class Event(db.Model):
     created_at = db.Column(db.DateTime)
 
     images = db.relationship('Image', backref='event', lazy=True)
+    event_organizer = db.relationship('EventOrganizer', backref='event', lazy=True)
 
 class Image(db.Model):
     __tablename__ = 'images'
