@@ -5,6 +5,7 @@ import Login from '@/views/Login.vue'
 import AdminDashboard from '@/components/admin/AdminDashboard.vue'
 import TablesAc from '@/components/admin/Accounts/TablesAc.vue'
 import TablesEv from '@/components/admin/Events/TablesEv.vue'
+import { auth } from './middleware/auth'
 
 const routes = [
   {
@@ -20,22 +21,26 @@ const routes = [
   {
     path: '/login',
     name: 'LoginPage',
-    component: Login
+    component: Login,
+    beforeEnter: auth // Menggunakan middleware auth
   },
   {
     path: '/admin',
     name: 'AdminDashboard',
-    component: AdminDashboard
+    component: AdminDashboard,
+    beforeEnter: auth // Menggunakan middleware auth
   },
   {
     path: '/admin/accounts',
     name: 'AdminAccounts',
-    component: TablesAc
+    component: TablesAc,
+    beforeEnter: auth // Menggunakan middleware auth
   },
   {
     path: '/admin/events',
     name: 'EventsAccounts',
-    component: TablesEv
+    component: TablesEv,
+    beforeEnter: auth // Menggunakan middleware auth
   },
 ]
 

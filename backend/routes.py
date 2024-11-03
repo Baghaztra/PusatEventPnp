@@ -105,9 +105,10 @@ def register_route(app, db):
         
         access_token = create_access_token(identity={'user_id': user.id, 'username': user.username})
         # return jsonify({"message": "Login berhasil", "token": access_token}), 200
-        response = make_response(redirect("http://localhost:8080/home"))  # Redirect ke aplikasi Vue
-        response.set_cookie("access_token", access_token, httponly=True)  # Simpan token dalam cookie
-        return response
+        return redirect(f"http://localhost:8080/home?token={access_token}")
+        # response = make_response(redirect("http://localhost:8080/home"))  # Redirect ke aplikasi Vue
+        # response.set_cookie("access_token", access_token, httponly=True)  # Simpan token dalam cookie
+        # return response
     
     @app.route('/logout')
     def logout():

@@ -5,12 +5,9 @@
         <div class="row">
           <div class="col-12">
             <nav class="main-nav d-flex">
-              <!-- ***** Logo Start ***** -->
               <a href="">
                 <img src="@/assets/logo.png" alt="" style="height: 4rem; width: auto" />
               </a>
-              <!-- ***** Logo End ***** -->
-              <!-- ***** Menu Start ***** -->
               <ul class="nav">
                 <li>
                   <router-link to="/home" exact-active-class="active" exact>Home</router-link>
@@ -26,8 +23,7 @@
                     <img
                       :src="profilePicture || 'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'"
                       alt="Profile Picture"
-                      style="width: 32px; height: 32px;"
-                      class="rounded-circle me-2" />
+                      class="rounded-circle me-2 profile-image" />
                     <span>Nama User</span>
                     <a class="dropdown-item" href="#" @click.prevent="logout">Sign out</a>
                   </div>
@@ -36,7 +32,6 @@
               <a class="menu-trigger">
                 <span>Menu</span>
               </a>
-              <!-- ***** Menu End ***** -->
             </nav>
           </div>
         </div>
@@ -86,12 +81,9 @@ export default {
       }
     },
     logout() {
-      // Hapus token dari localStorage
       localStorage.removeItem("token");
-      // Set isLoggedIn ke false
       this.isLoggedIn = false;
-      this.profilePicture = ""; // Kosongkan gambar profil
-      // Alihkan pengguna ke halaman login
+      this.profilePicture = ""; 
       this.$router.push('/login');
     },
   },
@@ -100,9 +92,8 @@ export default {
 
 <style>
 .profile-image {
-  border-radius: 50%; /* Membuat gambar bulat */
-  width: 1rem; /* Atur ukuran sesuai keinginan */
-  height: 1rem;
+  width: 3rem; /* Atur ukuran sesuai keinginan */
+  height: 3rem;
   object-fit: contain; /* Sesuaikan tinggi gambar dengan container */
 }
 </style>

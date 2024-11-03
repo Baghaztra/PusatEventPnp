@@ -23,7 +23,6 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    app.secret_key = 'pusatevent_asik'
     CORS(app)
     db.init_app(app)
 

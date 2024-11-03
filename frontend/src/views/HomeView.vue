@@ -127,12 +127,32 @@ export default {
         this.fetchEvents(page);
       }
     },
+    checkToken() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+      if (token) {
+        localStorage.setItem("token", token);
+        this.$router.push("/home");
+      } else {
+        window.location.reload();
+      }
+    }
   },
   created() {
     this.fetchEvents();
   },
+  watch: {
+    '$route': 'checkToken' 
+  },
   mounted() {
     document.title = 'Pusat Event Politeknik';
-  },
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+    if (token) {
+      localStorage.setItem("token", token);
+      this.$router.push("/home");
+    }
+  }
+
 };
 </script>
