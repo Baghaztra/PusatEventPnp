@@ -122,10 +122,14 @@ def register_route(app, db):
         # Ambil user_id dari token JWT
         identity = get_jwt_identity()
         user_id = identity.get('user_id')
-        
+
+        # Periksa apakah user_id ada
+        if not user_id:
+            return jsonify({"message": "User ID not found in token."}), 400
+
         # Cari user di database berdasarkan user_id
         user = User.query.get(user_id)
-        
+
         # Jika user ditemukan, kembalikan data profilnya
         if user:
             return jsonify({

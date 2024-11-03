@@ -24,7 +24,7 @@
                       :src="profilePicture || 'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'"
                       alt="Profile Picture"
                       class="rounded-circle me-2 profile-image" />
-                    <span>Nama User</span>
+                    <span>{{ userName }}</span> <!-- Menampilkan nama pengguna -->
                     <a class="dropdown-item" href="#" @click.prevent="logout">Sign out</a>
                   </div>
                 </template>
@@ -47,6 +47,7 @@ export default {
     return {
       isLoggedIn: false, // Status login pengguna
       profilePicture: "", // URL gambar profil pengguna
+      userName: "", // Nama pengguna
     };
   },
   mounted() {
@@ -63,7 +64,7 @@ export default {
   methods: {
     async fetchUserProfile(token) {
       try {
-        const response = await fetch("/profile", {
+        const response = await fetch("http://127.0.0.1:5000/profile", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -72,9 +73,10 @@ export default {
 
         if (response.ok) {
           const data = await response.json();
-          this.profilePicture = data.profile_picture;
+          this.profilePicture = data.profile_picture; // Ambil URL gambar profil
+          this.userName = data.username; // Ambil nama pengguna
         } else {
-          console.error("Gagal mengambil data profil pengguna");
+          console.error(response,"Gagal mengambil data profil pengguna");
         }
       } catch (error) {
         console.error("Error:", error);
@@ -84,6 +86,7 @@ export default {
       localStorage.removeItem("token");
       this.isLoggedIn = false;
       this.profilePicture = ""; 
+      this.userName = ""; // Reset nama pengguna saat logout
       this.$router.push('/login');
     },
   },
