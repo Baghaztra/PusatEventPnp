@@ -57,6 +57,28 @@ def register_route(app, db):
         else:
             return jsonify({"message": "Invalid email or password."}), 401
     
+    @app.route('/register', methods=['POST'])
+    def register():
+        data = request.get_json()
+        name = data['name']
+        email = data['email']
+        password = data['password']
+        
+        # Periksa apakah user sudah ada
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            # Jika belum ada, buat user baru dengan password yang di-hash
+            user = User(username=name, password=password, email=email, created_at=datetime.now())
+            db.session.add(user)
+            db.session.commit()
+
+            # Buat JWT token untuk user baru
+            access_token = create_access_token(identity={'user_id': user.id, 'username': user.username})
+            return jsonify({"message": "User registered successfully", "token": access_token}), 201
+        else:
+            return jsonify({"message": "Email already registered."}), 400
+        
     @app.route('/refresh', methods=['POST'])
     @jwt_required(refresh=True)
     def refresh():

@@ -4,30 +4,35 @@
       <div class="container">
         <div class="row">
           <div class="col-12">
-            <nav class="main-nav d-flex">
-              <a href="">
-                <img src="@/assets/logo.png" alt="" style="height: 4rem; width: auto" />
-              </a>
-              <ul class="nav">
+            <nav class="main-nav d-flex row">
+              <div class="col">
+                <div class="d-flex justify-content-center mt-2 align-items-center">
+                    <div>
+                      <div class="profile-container me-2">
+                        <img
+                          v-if="isLoggedIn" 
+                          :src="profilePicture || 'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'"
+                          alt="Profile Picture"
+                          class="profile-image" />
+                        <img v-else src="@/assets/logo.png" alt="logo" class="profile-image" />
+                      </div>
+                    </div>
+                    <span v-if="isLoggedIn">{{ userName }}</span>
+                </div>
+              </div>
+              <ul class="nav col">
                 <li>
                   <router-link to="/home" exact-active-class="active" exact>Home</router-link>
                 </li>
                 <li>
                   <router-link to="/about" exact-active-class="active" exact>About</router-link>
                 </li>
-                <template v-if="!isLoggedIn">
-                  <router-link to="/login" class="btn btn-primary">Login</router-link>
-                </template>
-                <template v-else>
-                  <div class="d-flex align-items-center">
-                    <img
-                      :src="profilePicture || 'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'"
-                      alt="Profile Picture"
-                      class="rounded-circle me-2 profile-image" />
-                    <span>{{ userName }}</span> <!-- Menampilkan nama pengguna -->
-                    <a class="dropdown-item" href="#" @click.prevent="logout">Sign out</a>
-                  </div>
-                </template>
+                <li v-if="!isLoggedIn">
+                  <router-link to="/login" class="btn btn-light text-cyan">Login</router-link>
+                </li>
+                <li v-else>
+                  <router-link to="#" @click.prevent="logout">Log out</router-link>
+                </li>
               </ul>
               <a class="menu-trigger">
                 <span>Menu</span>
@@ -94,9 +99,19 @@ export default {
 </script>
 
 <style>
-.profile-image {
-  width: 3rem; /* Atur ukuran sesuai keinginan */
+.profile-container {
+  width: 3rem;
   height: 3rem;
-  object-fit: contain; /* Sesuaikan tinggi gambar dengan container */
+  overflow: hidden;
+  border-radius: 50%; 
+}
+
+.profile-image {
+  width: 100%;         
+  height: 100%;        
+  object-fit: contain; 
+}
+.text-cyan {
+  color: #22b3c1 !important;
 }
 </style>

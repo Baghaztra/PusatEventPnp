@@ -21,10 +21,9 @@
                     <div class="main-button d-flex justify-content-center mb-3">
                       <router-link to="/login">Login!</router-link>
                     </div>
-                    <router-link class="text-button" to="/register">dont have any account?</router-link>
-                    <span>
-                        or <router-link class="text-button" to="/home">enter without login</router-link>
-                    </span>
+                    <router-link class="text-button" to="/register">dont have any account yet</router-link>
+                    <router-link class="text-button" to="/home">enter without login</router-link>
+                    <router-link class="text-button" to="/event-organizer">event organizer</router-link>
                 </div>
               </div>
             </div>

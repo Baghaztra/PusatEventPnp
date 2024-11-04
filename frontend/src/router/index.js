@@ -6,6 +6,7 @@ import AdminDashboard from '@/components/admin/AdminDashboard.vue'
 import TablesAc from '@/components/admin/Accounts/TablesAc.vue'
 import TablesEv from '@/components/admin/Events/TablesEv.vue'
 import { auth } from './middleware/auth'
+import Register from '@/views/Register.vue'
 
 const routes = [
   {
@@ -22,25 +23,31 @@ const routes = [
     path: '/login',
     name: 'LoginPage',
     component: Login,
-    beforeEnter: auth // Menggunakan middleware auth
+    beforeEnter: auth
+  },
+  {
+    path: '/register',
+    name: 'RegisterPage',
+    component: Register,
+    beforeEnter: auth
   },
   {
     path: '/admin',
     name: 'AdminDashboard',
     component: AdminDashboard,
-    beforeEnter: auth // Menggunakan middleware auth
+    beforeEnter: auth
   },
   {
     path: '/admin/accounts',
     name: 'AdminAccounts',
     component: TablesAc,
-    beforeEnter: auth // Menggunakan middleware auth
+    beforeEnter: auth
   },
   {
     path: '/admin/events',
     name: 'EventsAccounts',
     component: TablesEv,
-    beforeEnter: auth // Menggunakan middleware auth
+    beforeEnter: auth
   },
 ]
 
