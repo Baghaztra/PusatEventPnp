@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <PublicStyle/>
+    <PublicStyle />
     <NavbarComponent />
     <!-- ***** Main Banner Area Start ***** -->
     <div class="visit-country bg-white text-dark">
@@ -8,11 +8,7 @@
         <div class="row">
           <div class="col-lg-5">
             <div class="section-heading">
-              <h2>Visit One Of Our Countries Now</h2>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore.
-              </p>
+              <h2>Upcomming Events</h2>
             </div>
           </div>
         </div>
@@ -25,18 +21,15 @@
                 <div v-for="event in events" :key="event.id" class="col-lg-12">
                   <div class="item">
                     <div class="row">
-                      <div class="col-lg-4 col-sm-5">
-                        <div v-if="event.images && event.images.length > 0">
-                          <img :src="event.images[0]" alt="Event Image" />
+                      <div class="col-lg-6 col-sm-5">
+                        <div v-if="event.images && event.images.length > 0" class="image-container">
+                          <img :src="event.images[0]" class="image-cover" alt="Event Image" />
                         </div>
                       </div>
-                      <div class="col-lg-8 col-sm-7">
+                      <div class="col-lg-6 col-sm-7">
                         <div class="right-content">
                           <h4>{{ event.title }}</h4>
                           <span>{{ event.event_date }}</span>
-                          <div class="main-button">
-                            <a href="about.html">Explore More</a>
-                          </div>
                           <div>
                             {{ event.description }}
                           </div>
@@ -52,6 +45,12 @@
                             ></a>
                           </div> -->
                         </div>
+
+                        <div class="position-absolute bottom-0 end-0">
+                          <div class="main-button">
+                            <a href="about.html">Explore More</a>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -60,11 +59,17 @@
                 <div class="col-lg-12">
                   <ul class="page-numbers">
                     <li>
-                      <a @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"><i class="fa fa-arrow-left"></i></a>
+                      <a @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
+                        ><i class="fa fa-arrow-left"></i
+                      ></a>
                     </li>
-                    <li><span>Page {{ currentPage }} of {{ pages }}</span> pages</li>
                     <li>
-                      <a @click="goToPage(currentPage + 1)" :disabled="currentPage === pages"><i class="fa fa-arrow-right"></i></a>
+                      <span>Page {{ currentPage }} of {{ pages }}</span> pages
+                    </li>
+                    <li>
+                      <a @click="goToPage(currentPage + 1)" :disabled="currentPage === pages"
+                        ><i class="fa fa-arrow-right"></i
+                      ></a>
                     </li>
                   </ul>
                 </div>
@@ -76,7 +81,7 @@
     </div>
     <!-- ***** Main Banner Area End ***** -->
     <FooterComponent />
-    <PublicScripts/>
+    <PublicScripts />
   </div>
 </template>
 
@@ -93,7 +98,7 @@ export default {
     NavbarComponent,
     FooterComponent,
     PublicStyle,
-    PublicScripts
+    PublicScripts,
   },
   data() {
     return {
@@ -136,23 +141,35 @@ export default {
       } else {
         window.location.reload();
       }
-    }
+    },
   },
   created() {
     this.fetchEvents();
   },
   watch: {
-    '$route': 'checkToken' 
+    $route: "checkToken",
   },
   mounted() {
-    document.title = 'Pusat Event Politeknik';
+    document.title = "Pusat Event Politeknik";
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
     if (token) {
       localStorage.setItem("token", token);
       this.$router.push("/home");
     }
-  }
-
+  },
 };
 </script>
+
+<style scoped>
+.image-container {
+  height: 15rem;
+  width: 100%;
+  overflow: hidden;
+}
+.image-cover {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+</style>

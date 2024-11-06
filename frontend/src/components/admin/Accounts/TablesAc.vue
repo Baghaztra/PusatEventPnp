@@ -2,24 +2,25 @@
   <AdminLayout>
     <div class="container-fl">
       <!-- Tampilkan pesan jika data tidak tersedia -->
-      <p v-if="itemsSearching.length === 0">Data tidak tersedia atau sedang dimuat...</p>
+      <p v-if="accounts && accounts.length === 0">Data tidak tersedia atau sedang dimuat...</p>
 
       <!-- Tampilkan tabel jika ada data -->
       <table v-else class="table table-striped">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Event Organizer</th>
-            <th>Event Date</th>
+            <th>Name</th>
+            <th>Email</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody class="table-group-divider">
-          <tr v-for="(item, index) in itemsSearching" :key="index">
-            <td>{{ item.title }}</td>
-            <td>{{ item.eo }}</td>
-            <td>{{ item.event_date }}</td>
-            <td>{{ item.created_at }}</td>
+          <tr v-for="item in accounts" :key="item.id"> <!-- Gunakan item.id sebagai key -->
+            <td>{{ item.username }}</td>
+            <td>{{ item.email }}</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-danger" @click="deleteData(item.id)">Delete</a>
+              <a href="#" class="btn btn-sm btn-danger" @click="updateData(item.id)">Update</a>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -29,6 +30,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import axios from "axios";
 import AdminLayout from "@/views/AdminLayout.vue";
 
 export default {
@@ -37,46 +39,61 @@ export default {
     AdminLayout,
   },
   setup() {
-    const itemsSearching = ref([]); // Inisialisasi sebagai array kosong
+    const accounts = ref([]); // Inisialisasi sebagai array kosong
 
-    // Fungsi fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/event-latest?per_page=10000`);
-        const data = await response.json();
-        
-        itemsSearching.value = Array.isArray(data.events) ? data.events : [];
-        console.log("Data fetched:", itemsSearching.value); // Lakukan logging di sini
+        const response = await axios.get(`http://localhost:5000/users`);
+        const data = response.data; 
+
+        console.log("Data fetched:", data); 
+        accounts.value = Array.isArray(data) ? data : [];
       } catch (error) {
         console.error("Error fetching data:", error);
-        itemsSearching.value = []; // Set ke array kosong jika error terjadi
+        accounts.value = [];
       }
     };
+    // const editData = async (id) => {
+    //   try {
+    //     const response = await axios.get(`http://localhost:5000/users?id=${id}`);
+    //     const data = response.data; 
+
+    //     console.log("Data fetched:", data); 
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // };
+    // const updateData = async (id) => {
+    //   try {
+    //     const response = await axios.put(`http://localhost:5000/users`);
+    //     const data = response.data; 
+
+    //     console.log("Data fetched:", data); 
+    //   } catch (error) {
+    //     console.error("Error updating data:", error);
+    //   }
+    // };
+    // const deleteData = async (id) => {
+    //   try {
+    //     const response = await axios.delete(`http://localhost:5000/users?id=${id}`);
+    //     const data = response.data; 
+
+    //     console.log("Data fetched:", data); 
+    //   } catch (error) {
+    //     console.error("Error updating data:", error);
+    //   }
+    // };
 
     onMounted(() => {
-      fetchData(); // Ambil data saat komponen dipasang
+      fetchData();
     });
 
     return {
-      itemsSearching,
+      accounts,
     };
   },
 };
 </script>
 
 <style>
-/* table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-th {
-  background-color: #f2f2f2;
-  text-align: left;
-} */
 </style>
