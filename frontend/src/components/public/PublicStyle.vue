@@ -7,13 +7,10 @@ export default {
   name: "PublicStyle",
   mounted() {
     const styles = [
-      // "/vendor/bootstrap/css/bootstrap.min.css",
       "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css",
-      "/assets/css/fontawesome.css",
-      "/assets/css/templatemo-woox-travel.css",
-      "/assets/css/owl.css",
-      "/assets/css/animate.css",
       "https://unpkg.com/swiper@7/swiper-bundle.min.css",
+      "https://fonts.googleapis.com/css?family=Varela+Round",
+      "https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/united/bootstrap.min.css",
     ];
 
     styles.forEach((href) => {

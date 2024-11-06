@@ -1,14 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import LandingPage from '@/views/LandingPage.vue'
-import Login from '@/views/Login.vue'
+import LandingPage from '@/components/public/LandingPages/Index.vue'
 import AdminDashboard from '@/components/admin/AdminDashboard.vue'
 import TablesAc from '@/components/admin/Accounts/TablesAc.vue'
 import TablesEv from '@/components/admin/Events/TablesEv.vue'
 import { auth } from './middleware/auth'
-import Register from '@/views/Register.vue'
+import Login from '@/components/public/LandingPages/Login.vue'
+import Register from '@/components/public/LandingPages/Register.vue'
 
 const routes = [
+  // User
   {
     path: '/',
     name: 'LandingPage',
@@ -31,6 +32,9 @@ const routes = [
     component: Register,
     beforeEnter: auth
   },
+
+
+  // Admin
   {
     path: '/admin',
     name: 'AdminDashboard',
