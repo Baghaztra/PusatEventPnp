@@ -1,26 +1,10 @@
 <template>
-  <div>
-    <footer>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <p>
-              Copyright © 2036 <a href="#">WoOx Travel</a> Company. All rights
-              reserved. <br />Design:
-              <a
-                href="https://templatemo.com"
-                target="_blank"
-                title="free CSS templates"
-                >TemplateMo</a
-              >
-              Distribution:
-              <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-            </p>
-          </div>
-        </div>
-      </div>
-    </footer>
+  <footer class="bg-body-tertiary text-center text-lg-start">
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+    © 2024 Copyright:
+    <a class="text-body" href="https://instagram.com/baghaztra">Baghaztra</a>
   </div>
+</footer>
 </template>
 
 <script>

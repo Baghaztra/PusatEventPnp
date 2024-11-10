@@ -83,7 +83,7 @@
             Request!
           </button>
         </form>
-        <router-link class="text-button" to="/eologin">already have an account?</router-link>
+        <router-link class="text-button" to="/eo-login">already have an account?</router-link>
       </div>
     </div>
   </LpLayout>

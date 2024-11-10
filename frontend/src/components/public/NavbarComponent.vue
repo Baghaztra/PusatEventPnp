@@ -1,47 +1,67 @@
 <template>
   <div>
-    <header class="header-area header-sticky">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+      <!-- Container wrapper -->
       <div class="container">
-        <div class="row">
-          <div class="col-12">
-            <nav class="main-nav d-flex row">
-              <div class="col">
-                <div class="d-flex justify-content-center mt-2 align-items-center">
-                    <div>
-                      <div class="profile-container me-2">
-                        <img
-                          v-if="isLoggedIn" 
-                          :src="profilePicture || 'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'"
-                          alt="Profile Picture"
-                          class="profile-image" />
-                        <img v-else src="@/assets/logo.png" alt="logo" class="profile-image" />
-                      </div>
-                    </div>
-                    <span v-if="isLoggedIn">{{ userName }}</span>
-                </div>
-              </div>
-              <ul class="nav col">
-                <li>
-                  <router-link to="/home" exact-active-class="active" exact>Home</router-link>
-                </li>
-                <li>
-                  <router-link to="/about" exact-active-class="active" exact>About</router-link>
-                </li>
-                <li v-if="!isLoggedIn">
-                  <router-link to="/login" class="btn btn-light text-cyan">Login</router-link>
-                </li>
-                <li v-else>
-                  <router-link to="#" @click.prevent="logout">Log out</router-link>
-                </li>
-              </ul>
-              <a class="menu-trigger">
-                <span>Menu</span>
-              </a>
-            </nav>
+        <!-- Navbar brand -->
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <img
+              v-if="isLoggedIn"
+              :src="
+                profilePicture ||
+                'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'
+              "
+              alt="pfp"
+              class="profile-image rounded-circle"
+              style="width: 34px; height: 34px" />
+            <img
+              v-else
+              src="@/assets/logo.png"
+              alt="logo"
+              class="profile-image rounded-circle"
+              style="width: 34px; height: 34px" />
+          </div>
+          <span v-if="isLoggedIn">{{ userName }}</span>
+        </div>
+
+        <!-- Toggle button -->
+        <button
+          data-mdb-collapse-init
+          class="navbar-toggler"
+          type="button"
+          data-mdb-toggle="collapse"
+          data-mdb-target="#navbarButtonsExample">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Collapsible wrapper -->
+        <div class="collapse navbar-collapse" id="navbarButtonsExample">
+          <div class="d-flex ms-auto align-items-center">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <router-link class="nav-link" to="/home">Home</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/">Landing page</router-link>
+              </li>
+              <li class="nav-item" v-if="!isLoggedIn">
+                <!-- Show Login and Sign Up buttons if not logged in -->
+                <router-link to="/login" class="nav-link text-cyan me-2">Login</router-link>
+              </li>
+              <li class="nav-item" v-else>
+                <!-- Show Log out button if logged in -->
+                <a href="#" @click.prevent="logout" class="nav-link text-cyan me-2">Log out</a>
+              </li>
+            </ul>
           </div>
         </div>
+        <!-- Collapsible wrapper -->
       </div>
-    </header>
+      <!-- Container wrapper -->
+    </nav>
+    <!-- Navbar -->
   </div>
 </template>
 
@@ -81,7 +101,7 @@ export default {
           this.profilePicture = data.profile_picture; // Ambil URL gambar profil
           this.userName = data.username; // Ambil nama pengguna
         } else {
-          console.error(response,"Gagal mengambil data profil pengguna");
+          console.error(response, "Gagal mengambil data profil pengguna");
         }
       } catch (error) {
         console.error("Error:", error);
@@ -90,9 +110,9 @@ export default {
     logout() {
       localStorage.removeItem("token");
       this.isLoggedIn = false;
-      this.profilePicture = ""; 
+      this.profilePicture = "";
       this.userName = ""; // Reset nama pengguna saat logout
-      this.$router.push('/login');
+      this.$router.push("/login");
     },
   },
 };
@@ -103,13 +123,13 @@ export default {
   width: 3rem;
   height: 3rem;
   overflow: hidden;
-  border-radius: 50%; 
+  border-radius: 50%;
 }
 
 .profile-image {
-  width: 100%;         
-  height: 100%;        
-  object-fit: contain; 
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .text-cyan {
   color: #22b3c1 !important;

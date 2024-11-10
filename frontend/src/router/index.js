@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import LandingPage from '@/components/public/LandingPages/Index.vue'
 import AdminDashboard from '@/components/admin/AdminDashboard.vue'
 import TablesAc from '@/components/admin/Accounts/TablesAc.vue'
@@ -9,6 +8,7 @@ import Login from '@/components/public/LandingPages/Login.vue'
 import Register from '@/components/public/LandingPages/Register.vue'
 import Eologin from '@/components/public/LandingPages/Eologin.vue'
 import Eoregister from '@/components/public/LandingPages/Eoregister.vue'
+import HomePage from '@/components/public/MainPages/HomePage.vue'
 
 const routes = [
   // User
@@ -20,7 +20,7 @@ const routes = [
   {
     path: '/home',
     name: 'HomePage',
-    component: HomeView
+    component: HomePage
   },
   {
     path: '/login',

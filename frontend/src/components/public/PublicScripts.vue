@@ -11,8 +11,8 @@ export default {
     // Muat file JavaScript eksternal
     const scripts = [
       "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js",
-      "js/scripts.js",
       "https://cdn.startbootstrap.com/sb-forms-latest.js",
+      "https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js",
     ];
 
     scripts.forEach((src) => {
