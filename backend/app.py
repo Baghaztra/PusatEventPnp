@@ -26,8 +26,8 @@ def create_app():
     CORS(app)
     db.init_app(app)
 
-    from routes import register_route
-    register_route(app, db)
+    from routes.init import register_route
+    register_route(app)
 
     migrate = Migrate(app, db)
 
