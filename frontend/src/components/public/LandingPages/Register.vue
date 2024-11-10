@@ -5,7 +5,7 @@
         <i class="fas fa-caret-left"></i>
       </router-link>
 
-      <div class="flex-column">
+      <div class="flex-column formulir">
         <h5 class="card-title">Register</h5>
         <form @submit.prevent="register">
           <div class="mb-3">
@@ -161,4 +161,14 @@ export default {
   backdrop-filter: blur(5px);
   border-radius: 10px;
 }
+.formulir {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .formulir {
+    width: 100%; 
+  }
+}
+
 </style>

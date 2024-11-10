@@ -20,7 +20,7 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') 
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY') 
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES')))
-
+    app.config['UPLOAD_FOLDER'] = "uploads"
     jwt = JWTManager(app)
 
     CORS(app)

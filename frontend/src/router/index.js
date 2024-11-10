@@ -7,6 +7,8 @@ import TablesEv from '@/components/admin/Events/TablesEv.vue'
 import { auth } from './middleware/auth'
 import Login from '@/components/public/LandingPages/Login.vue'
 import Register from '@/components/public/LandingPages/Register.vue'
+import Eologin from '@/components/public/LandingPages/Eologin.vue'
+import Eoregister from '@/components/public/LandingPages/Eoregister.vue'
 
 const routes = [
   // User
@@ -30,6 +32,18 @@ const routes = [
     path: '/register',
     name: 'RegisterPage',
     component: Register,
+    beforeEnter: auth
+  },
+  {
+    path: '/eo-login',
+    name: 'EoLoginPage',
+    component: Eologin,
+    beforeEnter: auth
+  },
+  {
+    path: '/eo-register',
+    name: 'EoRegisterPage',
+    component: Eoregister,
     beforeEnter: auth
   },
 

@@ -1,5 +1,6 @@
 from flask import request, jsonify, session, abort, redirect, make_response
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models import *
 from datetime import datetime
@@ -131,6 +132,48 @@ def register_route(app, db):
         # response = make_response(redirect("http://localhost:8080/home"))  # Redirect ke aplikasi Vue
         # response.set_cookie("access_token", access_token, httponly=True)  # Simpan token dalam cookie
         # return response
+    
+    @app.route('/eo-register', methods=['POST'])
+    def eo_register():
+        data = request.form
+        file = request.files.get('pfp')
+
+        # Ambil data dari request
+        name = data.get('name')
+        email = data.get('email')
+        password = data.get('password')
+        bio = data.get('bio')
+
+        # Validasi data
+        if not all([name, email, password, bio]):
+            return jsonify({"message": "Lengkapi semua field!"}), 400
+
+        # Proses file gambar jika ada
+        profile_picture_url = None
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            profile_picture_url = f"/{file_path}"  # URL relatif
+
+        # Buat instance EO baru dan simpan ke database
+        eo = EventOrganizer(
+            name=name,
+            email=email,
+            password=password,  # Harus di-hash dalam produksi
+            bio=bio,
+            profile_picture=profile_picture_url
+        )
+        db.session.add(eo)
+        db.session.commit()
+
+        # Buat response dengan profile_picture
+        response = {
+            "message": "Registrasi berhasil!",
+            "token": "dummy_token_1234567890",  # Ganti dengan token sebenarnya jika menggunakan sistem auth
+            "profile_picture": eo.profile_picture
+        }
+        return jsonify(response), 200
     
     @app.route('/logout')
     def logout():
