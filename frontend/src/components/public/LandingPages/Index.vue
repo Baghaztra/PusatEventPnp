@@ -1,6 +1,6 @@
 <template>
   <LpLayout>
-    <div class="d-flex flex-column align-items-center main-box p-5 text-center">
+    <div class="d-flex flex-column align-items-center main-box text-center">
       <h5 class="text-light">Explore any up comming event in State Polytechnic of Padang</h5>
       <h1 class="text-light title">Pusat Event Politeknik</h1>
       <router-link class="btn btn-primary btn-lg m-3" to="/login">Login!</router-link>

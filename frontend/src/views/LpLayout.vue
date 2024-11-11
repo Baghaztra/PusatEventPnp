@@ -1,6 +1,6 @@
 <template>
   <PublicStyle />
-  <div class="home" style="height: 100vh">
+  <div class="home" style=" height: 100vh;">
     <header class="masthead">
       <div class="blur">
         <div class="container d-flex h-100 align-items-center justify-content-center">

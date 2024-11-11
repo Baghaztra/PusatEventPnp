@@ -68,7 +68,7 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label" for="pfp">Profile picture</label>
-                <input class="form-control" type="file" id="pfp" @change="handleFileUpload">
+                <input class="form-control" type="file" id="pfp" @change="onFileSelected">
               </div>
               <div class="mb-3">
                 <label class="form-label" for="bio">Bio</label>
@@ -111,7 +111,7 @@ export default {
     };
   },
   methods: {
-    handleFileUpload(event) {
+    onFileSelected(event){
       this.pfp = event.target.files[0];
     },
     async register() {
@@ -121,14 +121,14 @@ export default {
         formData.append("email", this.email);
         formData.append("password", this.password);
         formData.append("bio", this.bio);
-        formData.append("pfp", this.pfp);
+        formData.append("pfp", this.pfp, this.pfp.name);
 
         try {
           const response = await axios.post("http://localhost:5000/eo-register", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-          const token = response.data.token;
-          console.log("Registrasi berhasil, token disimpan:", token);
+          // const token = response.data.token;
+          console.log("Registrasi berhasil:", response);
 
           this.$router.push("/waiting");
         } catch (error) {

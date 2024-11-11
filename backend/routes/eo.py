@@ -1,4 +1,3 @@
-import os
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -24,13 +23,17 @@ def eo_register():
 
     if not all([name, email, password, bio]):
         return jsonify({"message": "Lengkapi semua field!"}), 400
+    
+    if 'pfp' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
 
-    profile_picture_url = None
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        profile_picture_url = f"/{file_path}" 
+    file = request.files['pfp']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    filename = "uploads/eo_pfp/" + secure_filename(file.filename)
+    file.save(filename)
+    file_path = "http://localhost:5000/" + filename
     
     eo = EventOrganizer(
         username=name,
@@ -38,7 +41,7 @@ def eo_register():
         password=password,
         bio=bio,
         status="Waiting",
-        profile_picture=profile_picture_url,
+        profile_picture=file_path,
         created_at=datetime.now()
     )
     
