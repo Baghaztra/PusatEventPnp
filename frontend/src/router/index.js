@@ -9,6 +9,7 @@ import Register from '@/components/public/LandingPages/Register.vue'
 import Eologin from '@/components/public/LandingPages/Eologin.vue'
 import Eoregister from '@/components/public/LandingPages/Eoregister.vue'
 import HomePage from '@/components/public/MainPages/HomePage.vue'
+import Waiting from '@/components/public/LandingPages/Waiting.vue'
 
 const routes = [
   // User
@@ -34,6 +35,8 @@ const routes = [
     component: Register,
     beforeEnter: auth
   },
+
+  // Event organizer
   {
     path: '/eo-login',
     name: 'EoLoginPage',
@@ -44,6 +47,12 @@ const routes = [
     path: '/eo-register',
     name: 'EoRegisterPage',
     component: Eoregister,
+    beforeEnter: auth
+  },
+  {
+    path: '/waiting',
+    name: 'EoWaitingPage',
+    component: Waiting,
     beforeEnter: auth
   },
 
