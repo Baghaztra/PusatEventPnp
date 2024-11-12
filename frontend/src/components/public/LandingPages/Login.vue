@@ -81,14 +81,18 @@ export default {
         });
         const token = response.data.token;
         localStorage.setItem("token", token);
-
-        // Pindah ke halaman /home
-        this.$router.push("/home");
+        console.log(response.data);
+        
+        if (response.data.role == 'admin') {
+          this.$router.push("/admin");
+        }else{
+          this.$router.push("/home");
+        }
 
         console.log("Login berhasil, token disimpan:", token);
       } catch (error) {
         if (error.response) {
-          alert(error.response.data.message); // Tampilkan pesan error
+          alert(error.response.data.message);
         } else {
           console.error(error);
         }

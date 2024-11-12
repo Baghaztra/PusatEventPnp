@@ -10,6 +10,7 @@ import Eologin from '@/components/public/LandingPages/Eologin.vue'
 import Eoregister from '@/components/public/LandingPages/Eoregister.vue'
 import HomePage from '@/components/public/MainPages/HomePage.vue'
 import Waiting from '@/components/public/LandingPages/Waiting.vue'
+import TablesEo from '@/components/admin/Eventorganizers/TablesEo.vue'
 
 const routes = [
   // User
@@ -71,8 +72,14 @@ const routes = [
     beforeEnter: auth
   },
   {
+    path: '/admin/eo',
+    name: 'AdminEventorganizers',
+    component: TablesEo,
+    beforeEnter: auth
+  },
+  {
     path: '/admin/events',
-    name: 'EventsAccounts',
+    name: 'AdminEvents',
     component: TablesEv,
     beforeEnter: auth
   },

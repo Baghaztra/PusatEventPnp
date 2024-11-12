@@ -1,6 +1,6 @@
 from faker import Faker
 from app import db, create_app
-from models import User, EventOrganizer, Event, Like, Comment, Follow, Image, TemporaryImage, Report
+from models import *
 from datetime import datetime
 import random
 

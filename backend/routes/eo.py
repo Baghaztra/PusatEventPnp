@@ -48,6 +48,9 @@ def eo_register():
     db.session.add(eo)
     db.session.commit()
 
+    if request.method == 'OPTIONS':
+        # Merespons preflight dengan 200
+        return jsonify({"message": "CORS preflight successful"}), 200
     response = {
         "message": "Registrasi berhasil! Tunggu konfirmasi dari admin!",
     }

@@ -24,6 +24,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 client_secrets_file = os.path.join(
     pathlib.Path(__file__).parent, "../client_secret.json")
+
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=["https://www.googleapis.com/auth/userinfo.profile",
@@ -89,12 +90,25 @@ def login():
 
     user = User.query.filter_by(email=email).first()
 
-    # jika ada user yang dicari, dan passwornya benar
     if user and user.verify_password(password):
-        # Buat JWT token dengan informasi user_id
         access_token = create_access_token(
             identity={'user_id': user.id, 'username': user.username})
-        return jsonify({"message": "Login success", "token": access_token}), 200
+        return jsonify({"message": "Login success", "token": access_token, "role":user.role}), 200
+    else:
+        return jsonify({"message": "Invalid email or password."}), 401
+
+@login_bp.route('/login-eo', methods=['POST'])
+def login_eo():
+    data = request.get_json()
+    email = data['email']
+    password = data['password']
+
+    eo = EventOrganizer.query.filter_by(email=email).first()
+
+    if eo and eo.verify_password(password):
+        access_token = create_access_token(
+            identity={'eo_id': eo.id, 'username': eo.username})
+        return jsonify({"message": "Login success", "token": access_token, "role":"event organizer"}), 200
     else:
         return jsonify({"message": "Invalid email or password."}), 401
 

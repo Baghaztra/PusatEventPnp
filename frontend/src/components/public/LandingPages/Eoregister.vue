@@ -17,7 +17,7 @@
                   class="form-control"
                   id="name"
                   v-model="name"
-                  placeholder="Your name"
+                  placeholder="Organization name"
                   required />
               </div>
               <div class="mb-3">

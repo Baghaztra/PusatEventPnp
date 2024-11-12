@@ -72,22 +72,25 @@
     methods: {
       async login() {
         try {
-          const response = await axios.post("http://localhost:5000/eo-login", {
+          const response = await axios.post("http://localhost:5000/login-eo", {
             email: this.email,
             password: this.password,
           });
           const token = response.data.token;
-          localStorage.setItem("token", token);
-  
-          // Pindah ke halaman /home
-          this.$router.push("/home");
-  
-          console.log("Login berhasil, token disimpan:", token);
+          if (token) {
+            localStorage.setItem("token", token);
+            this.$router.push("/home");
+            console.log("Login berhasil, token disimpan:", token);
+          } else {
+            console.error("Token tidak ditemukan di respons backend.");
+          }
+
         } catch (error) {
           if (error.response) {
-            alert(error.response.data.message); // Tampilkan pesan error
+            console.error("Error dari server:", error.response);
+            alert(error.response.data.message || "Login gagal");
           } else {
-            console.error(error);
+            console.error("Kesalahan jaringan atau lainnya:", error);
           }
         }
       },

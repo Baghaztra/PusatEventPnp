@@ -24,11 +24,16 @@ def create_app():
     jwt = JWTManager(app)
 
     CORS(app)
+
     db.init_app(app)
 
-    from routes.init import register_route
+    from routes import register_route
     register_route(app)
 
     migrate = Migrate(app, db)
 
     return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True, port=5000)
