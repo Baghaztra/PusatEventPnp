@@ -7,31 +7,17 @@
         <!-- Navbar brand -->
         <div class="d-flex align-items-center">
           <div class="me-2">
-            <img
-              v-if="isLoggedIn"
-              :src="
-                profilePicture ||
-                'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'
-              "
-              alt="pfp"
-              class="profile-image rounded-circle"
-              style="width: 34px; height: 34px" />
-            <img
-              v-else
-              src="@/assets/logo.png"
-              alt="logo"
-              class="profile-image rounded-circle"
+            <img v-if="isLoggedIn" :src="profilePicture ||
+              'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'
+              " alt="pfp" class="profile-image rounded-circle" style="width: 34px; height: 34px" />
+            <img v-else src="@/assets/logo.png" alt="logo" class="profile-image rounded-circle"
               style="width: 34px; height: 34px" />
           </div>
           <span v-if="isLoggedIn">{{ userName }}</span>
         </div>
 
         <!-- Toggle button -->
-        <button
-          data-mdb-collapse-init
-          class="navbar-toggler"
-          type="button"
-          data-mdb-toggle="collapse"
+        <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-toggle="collapse"
           data-mdb-target="#navbarButtonsExample">
           <i class="fas fa-bars"></i>
         </button>
@@ -66,6 +52,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: "NavbarComponent",
   data() {
@@ -89,24 +77,28 @@ export default {
   methods: {
     async fetchUserProfile(token) {
       try {
-        const response = await fetch("http://127.0.0.1:5000/profile", {
-          method: "GET",
+        const response = await axios.get("http://127.0.0.1:5000/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          this.profilePicture = data.profile_picture; // Ambil URL gambar profil
-          this.userName = data.username; // Ambil nama pengguna
-        } else {
-          console.error(response, "Gagal mengambil data profil pengguna");
-        }
+        // Jika respons berhasil (status 200), langsung ambil data
+        const data = response.data;
+        this.profilePicture = data.profile_picture; // Ambil URL gambar profil
+        this.userName = data.username; // Ambil nama pengguna
+
+        console.log("Data profil pengguna:", data);
       } catch (error) {
-        console.error("Error:", error);
+        // Jika terjadi error, tampilkan pesan error
+        if (error.response) {
+          console.error("Gagal mengambil data profil pengguna:", error.response);
+        } else {
+          console.error("Error:", error.message);
+        }
       }
     },
+
     logout() {
       localStorage.removeItem("token");
       this.isLoggedIn = false;
@@ -131,6 +123,7 @@ export default {
   height: 100%;
   object-fit: contain;
 }
+
 .text-cyan {
   color: #22b3c1 !important;
 }

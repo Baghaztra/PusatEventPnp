@@ -107,7 +107,7 @@ def login_eo():
 
     if eo and eo.verify_password(password):
         access_token = create_access_token(
-            identity={'eo_id': eo.id, 'username': eo.username})
+            identity={'user_id': eo.id, 'username': eo.username})
         return jsonify({"message": "Login success", "token": access_token, "role":"event organizer"}), 200
     else:
         return jsonify({"message": "Invalid email or password."}), 401
@@ -150,19 +150,22 @@ def get_profile():
      # Ambil user_id dari token JWT
     identity = get_jwt_identity()
     user_id = identity.get('user_id')
+    role = identity.get('role')
 
     # Periksa apakah user_id ada
     if not user_id:
         return jsonify({"message": "User ID not found in token."}), 400
-
-        # Cari user di database berdasarkan user_id
-    user = User.query.get(user_id)
+    if role == 'event organizer':
+        user = EventOrganizer.query.get(user_id)
+    else:
+        user = User.query.get(user_id)
 
         # Jika user ditemukan, kembalikan data profilnya
     if user:
         return jsonify({
             "username": user.username,
-            "profile_picture": user.profile_picture  # pastikan field ini ada di model User
+            "profile_picture": user.profile_picture,
+            "role": role 
         }), 200
     else:
         return jsonify({"message": "User not found."}), 404
