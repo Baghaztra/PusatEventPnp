@@ -11,6 +11,7 @@ import Eoregister from '@/components/public/LandingPages/Eoregister.vue'
 import HomePage from '@/components/public/MainPages/HomePage.vue'
 import Waiting from '@/components/public/LandingPages/Waiting.vue'
 import TablesEo from '@/components/admin/Eventorganizers/TablesEo.vue'
+import HomeLayout from '@/views/HomeLayout.vue'
 
 const routes = [
   // User
@@ -18,6 +19,11 @@ const routes = [
     path: '/',
     name: 'LandingPage',
     component: LandingPage
+  },
+  {
+    path: '/test',
+    name: 'CobaCoba',
+    component: HomeLayout
   },
   {
     path: '/home',

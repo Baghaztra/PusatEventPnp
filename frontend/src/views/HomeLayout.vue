@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <PublicStyle />
-    <NavbarComponent />
+    <NavbarComponent class="sticky-top"/>
     <main>
       <slot></slot>
     </main>

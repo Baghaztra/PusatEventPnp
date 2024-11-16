@@ -72,7 +72,7 @@
     methods: {
       async login() {
         try {
-          const response = await axios.post("http://localhost:5000/login-eo", {
+          const response = await axios.post("http://localhost:5000/eo-login", {
             email: this.email,
             password: this.password,
           });

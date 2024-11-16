@@ -7,11 +7,7 @@ data_bp = Blueprint('data', __name__)
 
 @data_bp.route('/event-latest')
 def event_latest():
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 5, type=int)
-
-    events = Event.query.order_by(Event.created_at.desc()).paginate(
-        page=page, per_page=per_page)
+    events = Event.query.order_by(Event.start_date.desc())
 
     events_list = [
         {
@@ -22,20 +18,13 @@ def event_latest():
             "images": [image.path for image in event.images],
             "description": event.description,
             "event_date": event.start_date,
+            "event_date_end": event.end_date,
             "created_at": event.created_at
         }
-        for event in events.items
+        for event in events
     ]
 
-    return jsonify({
-        "total": events.total,
-        "pages": events.pages,
-        "current_page": events.page,
-        "per_page": events.per_page,
-        "has_next": events.has_next,
-        "has_prev": events.has_prev,
-        "events": events_list
-    }), 200
+    return jsonify(events_list), 200
 
 @data_bp.route('/users', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def users():

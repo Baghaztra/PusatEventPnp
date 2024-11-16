@@ -97,7 +97,7 @@ def login():
     else:
         return jsonify({"message": "Invalid email or password."}), 401
 
-@login_bp.route('/login-eo', methods=['POST'])
+@login_bp.route('/eo-login', methods=['POST'])
 def login_eo():
     data = request.get_json()
     email = data['email']

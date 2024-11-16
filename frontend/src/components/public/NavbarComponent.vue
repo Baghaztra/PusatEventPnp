@@ -1,54 +1,52 @@
 <template>
-  <div>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-      <!-- Container wrapper -->
-      <div class="container">
-        <!-- Navbar brand -->
-        <div class="d-flex align-items-center">
-          <div class="me-2">
-            <img v-if="isLoggedIn" :src="profilePicture ||
-              'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'
-              " alt="pfp" class="profile-image rounded-circle" style="width: 34px; height: 34px" />
-            <img v-else src="@/assets/logo.png" alt="logo" class="profile-image rounded-circle"
-              style="width: 34px; height: 34px" />
-          </div>
-          <span v-if="isLoggedIn">{{ userName }}</span>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Container wrapper -->
+    <div class="container">
+      <!-- Navbar brand -->
+      <div class="d-flex align-items-center">
+        <div class="me-2">
+          <img v-if="isLoggedIn" :src="profilePicture ||
+            'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'
+            " alt="pfp" class="profile-image rounded-circle" style="width: 34px; height: 34px" />
+          <img v-else src="@/assets/logo.png" alt="logo" class="profile-image rounded-circle"
+            style="width: 34px; height: 34px" />
         </div>
-
-        <!-- Toggle button -->
-        <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-toggle="collapse"
-          data-mdb-target="#navbarButtonsExample">
-          <i class="fas fa-bars"></i>
-        </button>
-
-        <!-- Collapsible wrapper -->
-        <div class="collapse navbar-collapse" id="navbarButtonsExample">
-          <div class="d-flex ms-auto align-items-center">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <router-link class="nav-link" to="/home">Home</router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/">Landing page</router-link>
-              </li>
-              <li class="nav-item" v-if="!isLoggedIn">
-                <!-- Show Login and Sign Up buttons if not logged in -->
-                <router-link to="/login" class="nav-link text-cyan me-2">Login</router-link>
-              </li>
-              <li class="nav-item" v-else>
-                <!-- Show Log out button if logged in -->
-                <a href="#" @click.prevent="logout" class="nav-link text-cyan me-2">Log out</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <!-- Collapsible wrapper -->
+        <span v-if="isLoggedIn">{{ userName }}</span>
       </div>
-      <!-- Container wrapper -->
-    </nav>
-    <!-- Navbar -->
-  </div>
+
+      <!-- Toggle button -->
+      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-toggle="collapse"
+        data-mdb-target="#navbarButtonsExample">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse" id="navbarButtonsExample">
+        <div class="d-flex ms-auto align-items-center">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <router-link class="nav-link" to="/home">Home</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/">Landing page</router-link>
+            </li>
+            <li class="nav-item" v-if="!isLoggedIn">
+              <!-- Show Login and Sign Up buttons if not logged in -->
+              <router-link to="/login" class="nav-link text-cyan me-2">Login</router-link>
+            </li>
+            <li class="nav-item" v-else>
+              <!-- Show Log out button if logged in -->
+              <a href="#" @click.prevent="logout" class="nav-link text-cyan me-2">Log out</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Collapsible wrapper -->
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
 </template>
 
 <script>
@@ -66,10 +64,8 @@ export default {
   mounted() {
     // Cek status login berdasarkan keberadaan token
     const token = localStorage.getItem("token");
-    this.isLoggedIn = !!token; // Jika token ada, set isLoggedIn ke true
-
-    if (this.isLoggedIn) {
-      // Panggil fungsi untuk mengambil data profil
+    if (token != null) {
+      this.isLoggedIn = true;
       this.fetchUserProfile(token);
     }
   },
@@ -98,7 +94,6 @@ export default {
         }
       }
     },
-
     logout() {
       localStorage.removeItem("token");
       this.isLoggedIn = false;
