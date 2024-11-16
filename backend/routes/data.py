@@ -26,6 +26,24 @@ def event_latest():
 
     return jsonify(events_list), 200
 
+@data_bp.route('/event/<id>')
+def event_details(id):
+    event = Event.query.get(id)
+    if event:
+        return jsonify({
+            "id": event.id,
+            "title": event.title,
+            "eo": event.event_organizer.username,
+            "eo_id": event.event_organizer.id,
+            "images": [image.path for image in event.images],
+            "description": event.description,
+            "event_date": event.start_date,
+            "event_date_end": event.end_date,
+            "created_at": event.created_at
+        }), 200
+    
+    return jsonify({"message": "User not found."}), 404
+
 @data_bp.route('/users', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def users():
     if request.method == 'POST':

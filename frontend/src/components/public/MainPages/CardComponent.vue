@@ -12,7 +12,7 @@
         <span class="text-primary">{{ formatDate(data.event_date) }}</span>
         <div class="mb-1">
           <router-link class="btn btn-primary me-1" to="">Register!</router-link>
-          <router-link class="btn btn-primary" to="">More</router-link>
+          <router-link class="btn btn-primary" :to="`/event/${data.id}`">More</router-link>
         </div>
       </div>
     </div>

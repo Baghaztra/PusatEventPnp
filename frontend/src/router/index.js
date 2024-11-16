@@ -12,9 +12,10 @@ import HomePage from '@/components/public/MainPages/HomePage.vue'
 import Waiting from '@/components/public/LandingPages/Waiting.vue'
 import TablesEo from '@/components/admin/Eventorganizers/TablesEo.vue'
 import HomeLayout from '@/views/HomeLayout.vue'
+import EventDetails from '@/components/public/MainPages/EventDetails.vue'
 
 const routes = [
-  // User
+  // Main
   {
     path: '/',
     name: 'LandingPage',
@@ -30,6 +31,14 @@ const routes = [
     name: 'HomePage',
     component: HomePage
   },
+  {
+    path: '/event/:id',
+    name: 'EventPage',
+    component: EventDetails,
+    props: true,
+  },
+
+  // User 
   {
     path: '/login',
     name: 'LoginPage',

@@ -33,11 +33,11 @@
             </li>
             <li class="nav-item" v-if="!isLoggedIn">
               <!-- Show Login and Sign Up buttons if not logged in -->
-              <router-link to="/login" class="nav-link text-cyan me-2">Login</router-link>
+              <router-link to="/login" class="nav-link text-primary me-2">Login</router-link>
             </li>
             <li class="nav-item" v-else>
               <!-- Show Log out button if logged in -->
-              <a href="#" @click.prevent="logout" class="nav-link text-cyan me-2">Log out</a>
+              <a href="#" @click.prevent="logout" class="nav-link text-primary me-2">Log out</a>
             </li>
           </ul>
         </div>
@@ -117,9 +117,5 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.text-cyan {
-  color: #22b3c1 !important;
 }
 </style>

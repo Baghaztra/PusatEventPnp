@@ -7,7 +7,7 @@
             v-for="(event, index) in events" 
             :key="index" 
             :data="event"
-            class="col-md-4" 
+            class="col-md-4 mb-3" 
           />
         </div>
       </div>
@@ -32,7 +32,7 @@ export default {
     };
   },
   methods: {
-    async fetchEvents(page = 1) {
+    async fetchEvents() {
       this.loading = true;
       try {
         const response = await axios.get(
@@ -43,11 +43,6 @@ export default {
         console.error(error);
       } finally {
         this.loading = false;
-      }
-    },
-    goToPage(page) {
-      if (page > 0 && page <= this.pages) {
-        this.fetchEvents(page);
       }
     },
     checkToken() {
