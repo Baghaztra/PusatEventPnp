@@ -39,125 +39,74 @@
 
       <!-- Gallery -->
       <h3>Gallery</h3>
-      <div
-        id="carouselExampleControls"
-        class="carousel slide"
-        data-mdb-ride="carousel"
-        data-mdb-carousel-init>
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/new/slides/041.webp"
-              class="d-block w-100"
-              alt="Wild Landscape" />
-          </div>
-          <div class="carousel-item">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/new/slides/042.webp"
-              class="d-block w-100"
-              alt="Camera" />
-          </div>
-          <div class="carousel-item">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/new/slides/043.webp"
-              class="d-block w-100"
-              alt="Exotic Fruits" />
+      <div class="row">
+        <div class="col">
+          <div class="d-flex overflow-auto">
+            <div
+              v-for="(image, index) in event.images"
+              :key="index"
+              class="p-2 image-container"
+              style="flex: 0 0 auto">
+              <img :src="image" alt="gambar" class="img-fluid rounded" />
+            </div>
           </div>
         </div>
-        <button
-          class="carousel-control-prev"
-          type="button"
-          data-mdb-target="#carouselExampleControls"
-          data-mdb-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button
-          class="carousel-control-next"
-          type="button"
-          data-mdb-target="#carouselExampleControls"
-          data-mdb-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
       </div>
+
       <!-- Gallery -->
 
       <!-- Forum -->
-      <h1>Forum</h1>
-      <section style="background-color: #e7effd">
-        <div class="container my-5 py-5 text-body">
+      <h3>Forum <i class="fa fa-thumbs-up"></i></h3>
+      <!-- Comentar -->
+      <section>
+        <div class="container mb-5 text-body">
           <div class="row d-flex justify-content-center">
-            <div class="col-md-11 col-lg-9 col-xl-7">
+            <div class="col-md-11">
+              <!-- Add new -->
               <div class="d-flex flex-start mb-4">
-                <img
-                  class="rounded-circle shadow-1-strong me-3"
-                  src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
-                  alt="avatar"
-                  width="65"
-                  height="65" />
+                <div class="pt-4">
+                    <img
+                      class="rounded-circle shadow-1-strong me-3"
+                      src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
+                      alt="avatar"
+                      width="45"
+                      height="45" />
+                </div>
                 <div class="card w-100">
                   <div class="card-body p-4">
-                    <div class="">
-                      <h5>Johny Cash</h5>
-                      <p class="small">3 hours ago</p>
-                      <p>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
-                        ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus
-                        viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec
-                        lacinia congue felis in faucibus ras purus odio, vestibulum in vulputate at,
-                        tempus viverra turpis.
-                      </p>
-
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                          <a href="#!" class="link-muted me-2"
-                            ><i class="fas fa-thumbs-up me-1"></i>132</a
-                          >
-                          <a href="#!" class="link-muted"
-                            ><i class="fas fa-thumbs-down me-1"></i>15</a
-                          >
-                        </div>
-                        <a href="#!" class="link-muted"><i class="fas fa-reply me-1"></i> Reply</a>
-                      </div>
+                    <div class="form-floating">
+                      <textarea
+                        class="form-control"
+                        placeholder="Leave a comment here"
+                        id="new_comment"></textarea>
+                      <label for="new_comment">Say something about this?</label>
                     </div>
                   </div>
                 </div>
               </div>
+              <!-- Add new -->
 
-              <div class="d-flex flex-start">
-                <img
-                  class="rounded-circle shadow-1-strong me-3"
-                  src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(31).webp"
-                  alt="avatar"
-                  width="65"
-                  height="65" />
+              <!-- Another comment -->
+              <div class="d-flex flex-start mb-4" v-for="_ in 10" :key="_">
+                <div class="pt-4">
+                    <img
+                      class="rounded-circle shadow-1-strong me-3"
+                      src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
+                      alt="avatar"
+                      width="45"
+                      height="45" />
+                </div>
                 <div class="card w-100">
                   <div class="card-body p-4">
-                    <div class="">
-                      <h5>Mindy Campbell</h5>
-                      <p class="small">5 hours ago</p>
-                      <p>
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus cumque
-                        doloribus dolorum dolor repellat nemo animi at iure autem fuga cupiditate
-                        architecto ut quam provident neque, inventore nisi eos quas?
-                      </p>
-
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                          <a href="#!" class="link-muted me-2"
-                            ><i class="fas fa-thumbs-up me-1"></i>158</a
-                          >
-                          <a href="#!" class="link-muted"
-                            ><i class="fas fa-thumbs-down me-1"></i>13</a
-                          >
-                        </div>
-                        <a href="#!" class="link-muted"><i class="fas fa-reply me-1"></i> Reply</a>
-                      </div>
-                    </div>
+                    <h5>John Doe</h5>
+                    <p class="small text-secondary  ">barusan banget</p>
+                    <p>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus voluptates distinctio minima officiis modi ipsum sunt facilis asperiores totam! Aspernatur magnam reprehenderit molestias est laboriosam esse atque inventore deleniti dolorem?
+                    </p>
                   </div>
                 </div>
               </div>
+              <!-- Another comment -->
             </div>
           </div>
         </div>
@@ -223,5 +172,9 @@ export default {
 }
 .link-muted:hover {
   color: #1266f1;
+}
+.image-container {
+  height: 400px;
+  width: auto;
 }
 </style>

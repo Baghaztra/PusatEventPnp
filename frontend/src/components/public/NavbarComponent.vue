@@ -6,18 +6,34 @@
       <!-- Navbar brand -->
       <div class="d-flex align-items-center">
         <div class="me-2">
-          <img v-if="isLoggedIn" :src="profilePicture ||
-            'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'
-            " alt="pfp" class="profile-image rounded-circle" style="width: 34px; height: 34px" />
-          <img v-else src="@/assets/logo.png" alt="logo" class="profile-image rounded-circle"
+          <img
+            v-if="isLoggedIn"
+            :src="
+              profilePicture ||
+              'https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg'
+            "
+            alt="pfp"
+            class="profile-image rounded-circle"
+            style="width: 34px; height: 34px" />
+          <img
+            v-else
+            src="@/assets/logo.png"
+            alt="logo"
+            class="profile-image rounded-circle"
             style="width: 34px; height: 34px" />
         </div>
         <span v-if="isLoggedIn">{{ userName }}</span>
       </div>
 
       <!-- Toggle button -->
-      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-toggle="collapse"
-        data-mdb-target="#navbarButtonsExample">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarButtonsExample"
+        aria-controls="navbarButtonsExample"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
       </button>
 
@@ -50,7 +66,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "NavbarComponent",
