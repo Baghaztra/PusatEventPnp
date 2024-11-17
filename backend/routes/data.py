@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
-from models import Event, User, EventOrganizer
+from models import *
 from app import db
 
 data_bp = Blueprint('data', __name__)
@@ -16,6 +16,7 @@ def event_latest():
             "eo": event.event_organizer.username,
             "eo_id": event.event_organizer.id,
             "images": [image.path for image in event.images],
+            "likes": [like.user_id for like in event.likes],
             "description": event.description,
             "event_date": event.start_date,
             "event_date_end": event.end_date,
@@ -36,6 +37,15 @@ def event_details(id):
             "eo": event.event_organizer.username,
             "eo_id": event.event_organizer.id,
             "images": [image.path for image in event.images],
+            "likes": [like.user_id for like in event.likes],
+            "comments": [
+                    {
+                        "username":comment.user.username,
+                        "username":comment.user.profile_picture,
+                        "text":comment.content,
+                        "created_at":comment.created_at,
+                    } for comment in event.comments
+                ],
             "description": event.description,
             "event_date": event.start_date,
             "event_date_end": event.end_date,

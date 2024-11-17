@@ -65,6 +65,8 @@ class Event(db.Model):
 
     images = db.relationship('Image', backref='event', lazy=True)
     event_organizer = db.relationship('EventOrganizer', backref='event', lazy=True)
+    likes = db.relationship('Like', backref='event', lazy=True)
+    comments = db.relationship('Comment', backref='event', lazy=True)
 
 class Image(db.Model):
     __tablename__ = 'images'
@@ -105,3 +107,5 @@ class Comment(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
     content = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
+
+    user = db.relationship('User', backref='comments', lazy='joined')
