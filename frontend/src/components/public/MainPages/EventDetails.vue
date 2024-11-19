@@ -67,19 +67,29 @@
                 <div class="pt-4">
                     <img
                       class="rounded-circle shadow-1-strong me-3"
-                      src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
+                      :src="profilePicture"
                       alt="avatar"
                       width="45"
                       height="45" />
                 </div>
                 <div class="card w-100">
-                  <div class="card-body p-4">
+                  <div class="card-body p-3">
                     <div class="form-floating">
                       <textarea
                         class="form-control"
                         placeholder="Leave a comment here"
-                        id="new_comment"></textarea>
+                        id="new_comment" 
+                        v-model="comment"
+                        @input="adjustHeight($event)"
+                        rows="1"
+                        style="overflow:hidden; resize:none;"></textarea>
                       <label for="new_comment">Say something about this?</label>
+                    </div>
+                    <div class="position-absolute bottom-0 end-0">
+                      <button class="btn btn-sm btn-primary end-0" v-on:click="sendComment"><i class="fa fa-circle-arrow-right"></i></button>
+                    </div>
+                    <div class="d-none text-danger" id="validation">
+                      <small>Can't send empty comment</small> 
                     </div>
                   </div>
                 </div>
@@ -87,22 +97,25 @@
               <!-- Add new -->
 
               <!-- Another comment -->
-              <div class="d-flex flex-start mb-4" v-for="_ in 10" :key="_">
+              <div class="d-flex flex-start mb-4" v-for="comment in event.comments" :key="comment">
                 <div class="pt-4">
                     <img
                       class="rounded-circle shadow-1-strong me-3"
-                      src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"
+                      :src="comment.pfp"
                       alt="avatar"
                       width="45"
                       height="45" />
                 </div>
                 <div class="card w-100">
                   <div class="card-body p-4">
-                    <h5>John Doe</h5>
-                    <p class="small text-secondary  ">barusan banget</p>
+                    <h5>{{ comment.username }}</h5>
+                    <p class="small text-secondary  ">{{ comment.created_at }}</p>
                     <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus voluptates distinctio minima officiis modi ipsum sunt facilis asperiores totam! Aspernatur magnam reprehenderit molestias est laboriosam esse atque inventore deleniti dolorem?
+                      {{ comment.text }}
                     </p>
+                  </div>
+                  <div v-if="comment.user_id == userId" class="position-absolute bottom-0 end-0 me-3 mb-3">
+                    <a v-on:click="deleteComment(comment.id)" class="text-danger"><small>Delete</small></a>
                   </div>
                 </div>
               </div>
@@ -119,6 +132,7 @@
 <script>
 import HomeLayout from "@/views/HomeLayout.vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default {
   name: "EventDetails",
@@ -130,8 +144,14 @@ export default {
   },
   data() {
     return {
+      token: "",
       event: {},
       loading: false,
+      isLoggedIn: false,
+      comment: "",
+      profilePicture: "",
+      userName: "",
+      userId: "",
     };
   },
   watch: {
@@ -150,18 +170,143 @@ export default {
       }
     },
 
+    async fetchUserProfile() {
+      try {
+        const response = await axios.get("http://127.0.0.1:5000/profile", {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+
+        const data = response.data;
+        this.profilePicture = data.profile_picture;
+        this.userName = data.username;
+        this.userId = data.user_id;
+      } catch (error) {
+        if (error.response) {
+          console.error("Gagal mengambil data profil pengguna:", error.response);
+        } else {
+          console.error("Error:", error.message);
+        }
+      }
+    },
+
     formatDate(dateString) {
       const date = new Date(Date.parse(dateString));
       if (isNaN(date)) {
-        console.error("Invalid date", dateString);
         return "";
       }
       const options = { weekday: "long", day: "2-digit", month: "long", year: "numeric" };
       return new Intl.DateTimeFormat("id-ID", options).format(date);
     },
+
+    adjustHeight(event) {
+      const textarea = event.target;
+      textarea.style.height = "auto"; // Reset tinggi
+      textarea.style.height = textarea.scrollHeight + "px"; // Sesuaikan tinggi
+    },
+
+    async sendComment() {
+      if(this.comment != ""){
+        try {
+          const payload = {
+            message: this.comment,
+            event_id: this.event.id,
+          };
+  
+          // Debug: log data yang akan dikirim
+          console.log("Payload yang dikirim:", payload);
+  
+          const response = await axios.post("http://127.0.0.1:5000/comment", payload, {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          });
+  
+          console.log(response.data);
+  
+          this.fetchEventDetails();
+
+          this.comment = ""
+          document.getElementById('validation').classList.add('d-none')
+          document.getElementById('validation').classList.remove('d-block')
+          
+        }catch(error){
+          if (error.response) {
+            alert(error.response.data.message);
+          } else {
+            console.error(error);
+          }
+        }
+      }else{
+        document.getElementById('validation').classList.add('d-block')
+        document.getElementById('validation').classList.remove('d-none')
+      }
+    },
+
+    async deleteComment(id) {
+      const result = await Swal.fire({
+        title: "Delete this comment?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "Cancel",
+        customClass: {
+          popup: 'card',
+          title: 'h5', 
+          confirmButton: 'btn btn-sm btn-danger me-3', 
+          cancelButton: 'btn btn-sm btn-secondary ms-3'
+        },
+        buttonsStyling: false,
+      });
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete("http://127.0.0.1:5000/comment", {
+            data: { comment_id: id }, 
+          });
+          console.log(response.data);
+          this.fetchEventDetails();
+          Swal.fire({
+            title: "Comment deleted!",
+            text: "The comment has been successfully deleted.",
+            icon: "success",
+            customClass: {
+              popup: 'card',
+              title: 'h4',
+              content: 'small',
+              confirmButton: 'btn btn-sm btn-success'
+            },
+            buttonsStyling: false 
+          });
+        }catch(error){
+          if (error.response) {
+            Swal.fire({
+            title: "Error!",
+            text: error.response.data.message,
+            icon: "error",
+            customClass: {
+              popup: 'alert alert-danger',
+              title: 'h4',
+              content: 'small',
+              confirmButton: 'btn btn-sm btn-success'
+            },
+            buttonsStyling: false 
+          });
+          } else {
+            console.error(error);
+          }
+        }
+      }
+    },
   },
   mounted() {
     this.fetchEventDetails();
+
+    this.token = localStorage.getItem("token");
+    if (this.token != "") {
+      this.isLoggedIn = true;
+      this.fetchUserProfile();
+    }
   },
 };
 </script>

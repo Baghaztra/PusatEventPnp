@@ -163,6 +163,7 @@ def get_profile():
         # Jika user ditemukan, kembalikan data profilnya
     if user:
         return jsonify({
+            "user_id": user.id,
             "username": user.username,
             "profile_picture": user.profile_picture,
             "role": role 

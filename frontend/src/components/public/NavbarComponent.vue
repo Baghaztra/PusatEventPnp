@@ -100,7 +100,7 @@ export default {
         this.profilePicture = data.profile_picture; // Ambil URL gambar profil
         this.userName = data.username; // Ambil nama pengguna
 
-        console.log("Data profil pengguna:", data);
+        // console.log("Data profil pengguna:", data);
       } catch (error) {
         // Jika terjadi error, tampilkan pesan error
         if (error.response) {

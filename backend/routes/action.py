@@ -35,6 +35,13 @@ def like(eid):
     db.session.commit()
     return jsonify({"msg": message}), 200
 
+@action_bp.route('/anu')
+@jwt_required() 
+def anu():
+    identity = get_jwt_identity()
+    user_id = identity.get('user_id')
+    return user_id
+
 @action_bp.route('/comment', methods=['POST'])
 @jwt_required() 
 def comment():
@@ -56,10 +63,28 @@ def comment():
         db.session.add(comment)
         db.session.commit()
         return jsonify({
-            "msg": "comment from user to event successfully"
+            "message": "comment from user to event successfully"
         }), 200
     else:
         return jsonify({"message": "User not found."}), 404
+
+@action_bp.route('/comment', methods=['DELETE'])
+def delete_comment():
+    try:
+        data = request.get_json()
+        if 'comment_id' not in data:
+            return jsonify({"message": "comment_id is required"}), 400
+
+        comment_id = data['comment_id']
+        comment = Comment.query.filter_by(id=comment_id).first()
+        if comment:
+            db.session.delete(comment)
+            db.session.commit()
+            return jsonify({"message": "Comment deleted successfully"}), 200
+        else:
+            return jsonify({"message": "Comment not found."}), 404
+    except Exception as e:
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
 
 @action_bp.route('/subscribe/<eid>', methods=['POST'])
 @jwt_required() 

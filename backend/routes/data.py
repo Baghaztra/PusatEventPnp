@@ -40,11 +40,13 @@ def event_details(id):
             "likes": [like.user_id for like in event.likes],
             "comments": [
                     {
+                        "id":comment.id,
+                        "user_id":comment.user.id,
                         "username":comment.user.username,
-                        "username":comment.user.profile_picture,
+                        "pfp":comment.user.profile_picture,
                         "text":comment.content,
                         "created_at":comment.created_at,
-                    } for comment in event.comments
+                    } for comment in reversed(event.comments)
                 ],
             "description": event.description,
             "event_date": event.start_date,
