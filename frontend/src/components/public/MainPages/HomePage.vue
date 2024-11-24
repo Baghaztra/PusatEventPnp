@@ -8,6 +8,7 @@
             :key="index" 
             :data="event"
             class="col-md-4 mb-3" 
+            @refresh-events="fetchEvents"
           />
         </div>
       </div>

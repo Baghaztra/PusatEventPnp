@@ -92,9 +92,12 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user and user.verify_password(password):
-        access_token = create_access_token(
-            identity={'user_id': user.id, 'username': user.username})
-        return jsonify({"message": "Login success", "token": access_token, "role":user.role}), 200
+        if user.status == "Active":
+            access_token = create_access_token(
+                identity={'user_id': user.id, 'username': user.username})
+            return jsonify({"message": "Login success", "token": access_token, "role":user.role}), 200
+        else:
+            return jsonify({"message": "The account is not active."}), 401
     else:
         return jsonify({"message": "Invalid email or password."}), 401
 
