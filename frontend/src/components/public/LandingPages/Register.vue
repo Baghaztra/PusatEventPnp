@@ -107,16 +107,16 @@ export default {
             email: this.email,
             password: this.password,
           });
-          const token = response.data.token;
-          localStorage.setItem("token", token);
+          // const token = response.data.token;
+          // localStorage.setItem("token", token);
 
           // Pindah ke halaman /home
-          this.$router.push("/home");
+          console.log(response.data.message);
+          this.$router.push("/waiting");
 
-          console.log("Registrasi berhasil, token disimpan:", token);
         } catch (error) {
           if (error.response) {
-            alert(error.response.data.message);
+            alert(error.response.data);
           } else {
             console.error(error);
           }
@@ -142,8 +142,8 @@ export default {
     if (token) {
       localStorage.setItem("token", token);
 
-      this.$router.replace({ path: "/home" });
-
+      // this.$router.replace({ path: "/home" });
+      this.$router.push("/waiting");
       console.log("Login dengan Google berhasil, token disimpan:", token);
     }
   },

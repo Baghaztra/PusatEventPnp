@@ -8,7 +8,7 @@ class User(db.Model):
     username = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     _password = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(50), default='Active')
+    status = db.Column(db.String(50), default='Waiting')
     profile_picture = db.Column(db.String(255), nullable=True)
     role = db.Column(db.String(50), default='user')
     created_at = db.Column(db.DateTime)
@@ -29,8 +29,8 @@ class EventOrganizer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    status = db.Column(db.String(50), default='Active')
+    _password = db.Column(db.String(255), nullable=False)
+    status = db.Column(db.String(50), default='Waiting')
     profile_picture = db.Column(db.String(255))
     bio = db.Column(db.Text)
     created_at = db.Column(db.DateTime)
@@ -41,10 +41,10 @@ class EventOrganizer(db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self._password = generate_password_hash(password)
 
     def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self._password, password)
 
 class Follow(db.Model):
     __tablename__ = 'follows'

@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify, session, abort, redirect
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask import Blueprint, request, jsonify, session, abort, redirect, current_app, render_template
+from flask_mail import Mail, Message
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, decode_token
 from models import *
 from datetime import datetime
 from google_auth_oauthlib.flow import Flow
@@ -10,7 +11,7 @@ from dotenv import load_dotenv
 import requests as req
 import pathlib
 import os
-from app import db
+from app import db, mail
 
 # Membuat blueprint untuk login
 login_bp = Blueprint('login', __name__)
@@ -70,7 +71,7 @@ def callback():
 
     if not user:
         # Simpan user baru jika belum ada
-        user = User(username=name, email=email, google_id=google_id,
+        user = User(username=name, email=email, google_id=google_id, status="Active",
                     profile_picture=pfp, created_at=datetime.now())
         db.session.add(user)
         db.session.commit()
@@ -126,22 +127,67 @@ def register():
     email = data['email']
     password = data['password']
 
-    # Periksa apakah user sudah ada
+    # Periksa apakah emeail sudah pernah digunakan
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        # Jika belum ada, buat user baru dengan password yang di-hash
         user = User(username=name, password=password,
                     email=email, created_at=datetime.now())
         db.session.add(user)
         db.session.commit()
 
-        # Buat JWT token untuk user baru
         access_token = create_access_token(
             identity={'user_id': user.id, 'username': user.username})
-        return jsonify({"message": "User registered successfully", "token": access_token}), 201
+        
+        # Kirim email verifikasi
+        msg_title = "Konfirmasi Akun Anda"
+        sender = "noreply@app.com"
+        verification_link = f"http://localhost:5000/verify/{access_token}"
+
+        msg = Message(
+            msg_title,
+            sender=sender,
+            recipients=[email]
+        )
+        msg_body = f"Halo {name},\n\nKlik link berikut untuk memverifikasi akun Anda:"
+        data = {
+            'app_name': "Pusat Event Politeknik",
+            'title': msg_title,
+            'body': msg_body,
+            'link': verification_link
+        }
+        msg.html = render_template("email.html", data=data)
+
+        try:
+            mail.send(msg)
+            return jsonify({"message": "Registration successful. Please check your email to verify your account."}), 201
+        except Exception as e:
+            print(e)
+            return jsonify({"message": "Failed to send verification email."}), 500
+    
+        # return jsonify({"message": "User registered successfully", "token": access_token}), 201
     else:
         return jsonify({"message": "Email already registered."}), 400
+    
+@login_bp.route('/verify/<token>', methods=['GET'])
+def verify_email(token):
+    try:
+        # Decode token
+        user_identity = decode_token(token)['sub']
+        user_id = user_identity['user_id']
+        
+        # Aktifkan user
+        user = User.query.get(user_id)
+        if user:
+            user.status = "Active"
+            db.session.commit()
+            return jsonify({"message": "Account verified successfully."}), 200
+        else:
+            return jsonify({"message": "Invalid or expired token."}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Verification failed."}), 400
+
 
 
 @login_bp.route('/profile', methods=['GET'])
