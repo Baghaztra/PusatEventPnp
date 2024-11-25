@@ -52,6 +52,9 @@ class Follow(db.Model):
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     followed_eo_id = db.Column(db.Integer, db.ForeignKey('event_organizers.id'), nullable=False)
     created_at = db.Column(db.DateTime)
+    
+    followed_eo = db.relationship('EventOrganizer', backref='followers', lazy=True)
+    follower = db.relationship('User', backref='followings', lazy=True)
 
 class Event(db.Model):
     __tablename__ = 'events'

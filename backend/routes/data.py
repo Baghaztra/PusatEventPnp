@@ -151,6 +151,7 @@ def event_organizers():
                 "profile_picture": eo.profile_picture,
                 "bio": eo.bio,
                 "created_at": eo.created_at,
+                "subs": [follow.follower_id for follow in eo.followers],
                 "events": [
                     {
                         "id": event.id,

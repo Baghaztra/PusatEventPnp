@@ -11,7 +11,7 @@
           <span class="visually-hidden">Loading...</span>
         </div>
         <div class="m-3" style="display: flex; align-items: center; flex-direction: column;">
-          <router-link class="text-button" to="/">back</router-link>
+          <router-link class="text-button" to="/">ok</router-link>
           <!-- <router-link class="text-button" to="/">contact admin</router-link> -->
         </div>
       </div>

@@ -80,7 +80,7 @@
             type="submit"
             class="btn mb-3"
             style="background-color: #22b3c1; color: aliceblue; width: 100%">
-            Request!
+            Request
           </button>
         </form>
         <router-link class="text-button" to="/eo-login">already have an account?</router-link>
@@ -92,6 +92,7 @@
 <script>
 import LpLayout from "@/views/LpLayout.vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default {
   name: "EoRegisterPage",
@@ -133,7 +134,12 @@ export default {
           this.$router.push("/waiting");
         } catch (error) {
           if (error.response) {
-            alert(error.response.data.message);
+            // alert(error.response.data.message);
+            Swal.fire({
+              title: "Something went wrong",
+              text: error.response.data.message,
+              icon: "error",
+            });
           } else {
             console.error(error);
           }

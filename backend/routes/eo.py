@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, render_template
+from flask_mail import Message
+from flask_jwt_extended import create_access_token
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from models import EventOrganizer
-from app import db
+from app import db, mail
 
 eo_bp = Blueprint('eo', __name__)
 
@@ -24,12 +26,15 @@ def eo_register():
     if not all([name, email, password, bio]):
         return jsonify({"message": "Lengkapi semua field!"}), 400
     
+    user = EventOrganizer.query.filter_by(email=email).first()
+    if user:
+        return jsonify({"message": "Email already registered."}), 400
     if 'pfp' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
+        return jsonify({'message': 'Error! No file part'}), 400
 
     file = request.files['pfp']
     if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+        return jsonify({'message': 'Error! No selected file'}), 400
 
     filename = "uploads/eo_pfp/" + secure_filename(file.filename)
     file.save(filename)
@@ -48,11 +53,35 @@ def eo_register():
     db.session.add(eo)
     db.session.commit()
 
-    if request.method == 'OPTIONS':
-        # Merespons preflight dengan 200
-        return jsonify({"message": "CORS preflight successful"}), 200
-    response = {
-        "message": "Registrasi berhasil! Tunggu konfirmasi dari admin!",
+    access_token = create_access_token(
+        identity={'user_id': eo.id, 'username': eo.username, 'role': 'event organizer'})
+        
+    # Kirim email verifikasi
+    msg_title = "Konfirmasi Akun Anda"
+    sender = "noreply@app.com"
+    verification_link = f"http://localhost:5000/verify/{access_token}"
+
+    msg = Message(
+        msg_title,
+        sender=sender,
+        recipients=[email]
+    )
+    msg_body = f"Halo {name},\n\nKlik link berikut untuk memverifikasi akun Anda:"
+    data = {
+        'app_name': "Pusat Event Politeknik",
+        'title': msg_title,
+        'body': msg_body,
+        'link': verification_link
     }
-    
-    return jsonify(response), 200
+    msg.html = render_template("email.html", data=data)
+
+    try:
+        mail.send(msg)
+        return jsonify({"message": "Registration successful. Please check your email to verify your account."}), 201
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Failed to send verification email."}), 500
+        
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Failed to send verification email."}), 500

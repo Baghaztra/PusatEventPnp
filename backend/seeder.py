@@ -104,16 +104,30 @@ def seed_images(n=20):
         )
         db.session.add(image)
     db.session.commit()
+    
+def seed_follows(n=20):
+    print(f"Seeding {n} follows...")
+    users = User.query.all()
+    eos = EventOrganizer.query.all()
+    for _ in range(n):
+        follow = Follow(
+            follower_id	=random.choice(users).id,
+            followed_eo_id=random.choice(eos).id,
+            created_at=datetime.now()
+        )
+        db.session.add(follow)
+    db.session.commit()
 
 def run_seeders():
     with app.app_context():
-        seed_test_user()
-        seed_users()
-        seed_event_organizers()
-        seed_events()
-        seed_likes()
-        seed_comments()
-        seed_images(50)
+        # seed_test_user()
+        # seed_users()
+        # seed_event_organizers()
+        # seed_events()
+        # seed_likes(100)
+        # seed_follows(100)
+        # seed_comments(100)
+        # seed_images(50)
         print("Seeding complete.")
 
 if __name__ == '__main__':

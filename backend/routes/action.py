@@ -33,7 +33,7 @@ def like(eid):
         message = "Like added from user to event successfully"
 
     db.session.commit()
-    return jsonify({"msg": message}), 200
+    return jsonify({"message": message}), 200
 
 @action_bp.route('/anu')
 @jwt_required() 
@@ -91,21 +91,30 @@ def delete_comment():
 def subscribe(eid):
     identity = get_jwt_identity()
     user_id = identity.get('user_id')
-    
     if not user_id:
         return jsonify({"message": "User ID not found in token."}), 400
     
+    event_organizer = EventOrganizer.query.get(eid)
+    if not event_organizer:
+        return jsonify({"message": f"Event Organizer with ID {eid} not found."}), 404
+    
     user = User.query.get(user_id)    
     if user:
-        follow = Follow(
-            user_id=user_id,
-            event_id=eid,
-            created_at=datetime.now()
-        )
-        db.session.add(follow)
+        existing_follow = Follow.query.filter_by(follower_id =user_id, followed_eo_id =eid).first()    
+        if existing_follow:
+            db.session.delete(existing_follow)
+            message = "Follow removed from user to event successfully"
+        else:
+            follow = Follow(
+                follower_id=user_id,
+                followed_eo_id =eid,
+                created_at=datetime.now()
+            )
+            db.session.add(follow)
+            message = "follow from user to event organizer added successfully"
         db.session.commit()
         return jsonify({
-            "msg": "follow from user to event organizer added successfully"
+            "message": message
         }), 200
     else:
         return jsonify({"message": "User not found."}), 404
@@ -131,7 +140,7 @@ def report(role, uid, why):
         db.session.add(report)
         db.session.commit()
         return jsonify({
-            "msg": "reported successfully"
+            "message": "reported successfully"
         }), 200
     else:
         return jsonify({"message": "User not found."}), 404

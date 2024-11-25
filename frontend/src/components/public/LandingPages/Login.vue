@@ -59,6 +59,7 @@
 <script>
 import LpLayout from "@/views/LpLayout.vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default {
   name: "LoginPage",
@@ -82,17 +83,21 @@ export default {
         const token = response.data.token;
         localStorage.setItem("token", token);
         console.log(response.data);
-        
-        if (response.data.role == 'admin') {
+
+        if (response.data.role == "admin") {
           this.$router.push("/admin");
-        }else{
+        } else {
           this.$router.push("/home");
         }
 
         console.log("Login berhasil, token disimpan:", token);
       } catch (error) {
         if (error.response) {
-          alert(error.response.data.message);
+          Swal.fire({
+            title: "Something went wrong",
+            text: error.response.data.message,
+            icon: "error",
+          });
         } else {
           console.error(error);
         }

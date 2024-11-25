@@ -110,9 +110,12 @@ def login_eo():
     eo = EventOrganizer.query.filter_by(email=email).first()
 
     if eo and eo.verify_password(password):
-        access_token = create_access_token(
-            identity={'user_id': eo.id, 'username': eo.username})
-        return jsonify({"message": "Login success", "token": access_token, "role":"event organizer"}), 200
+        if eo.status == "Active":
+            access_token = create_access_token(
+                identity={'user_id': eo.id, 'username': eo.username})
+            return jsonify({"message": "Login success", "token": access_token, "role":"event organizer"}), 200
+        else:
+            return jsonify({"message": "The account is not active."}), 401
     else:
         return jsonify({"message": "Invalid email or password."}), 401
 
@@ -140,7 +143,7 @@ def register():
         db.session.commit()
 
         access_token = create_access_token(
-            identity={'user_id': user.id, 'username': user.username})
+            identity={'user_id': user.id, 'username': user.username, 'role': 'user'})
         
         # Kirim email verifikasi
         msg_title = "Konfirmasi Akun Anda"
@@ -178,15 +181,25 @@ def verify_email(token):
         # Decode token
         user_identity = decode_token(token)['sub']
         user_id = user_identity['user_id']
+        role = user_identity['role']
         
         # Aktifkan user
-        user = User.query.get(user_id)
-        if user:
-            user.status = "Active"
-            db.session.commit()
-            return jsonify({"message": "Account verified successfully."}), 200
-        else:
-            return jsonify({"message": "Invalid or expired token."}), 400
+        if(role == 'user'):
+            user = User.query.get(user_id)
+            if user:
+                user.status = "Active"
+                db.session.commit()
+                return jsonify({"message": "Account verified successfully."}), 200
+            else:
+                return jsonify({"message": "Invalid or expired token."}), 400
+        elif(role == 'event organizer'):
+            user = EventOrganizer.query.get(user_id)
+            if user:
+                user.status = "Waiting Admin"
+                db.session.commit()
+                return jsonify({"message": "Email verified successfully. Wait for confirmation by admin."}), 200
+            else:
+                return jsonify({"message": "Invalid or expired token."}), 400
     except Exception as e:
         print(e)
         return jsonify({"message": "Verification failed."}), 400

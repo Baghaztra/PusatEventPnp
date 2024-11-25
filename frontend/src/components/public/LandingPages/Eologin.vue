@@ -56,6 +56,7 @@
   <script>
   import LpLayout from "@/views/LpLayout.vue";
   import axios from "axios";
+import Swal from "sweetalert2";
   
   export default {
     name: "EoLoginPage",
@@ -88,7 +89,12 @@
         } catch (error) {
           if (error.response) {
             console.error("Error dari server:", error.response);
-            alert(error.response.data.message || "Login gagal");
+            // alert(error.response.data.message || "Login gagal");
+            Swal.fire({
+              title: "Something went wrong",
+              text: error.response.data.message,
+              icon: "error",
+            });
           } else {
             console.error("Kesalahan jaringan atau lainnya:", error);
           }
