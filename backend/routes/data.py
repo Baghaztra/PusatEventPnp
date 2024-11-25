@@ -150,7 +150,21 @@ def event_organizers():
                 "status": eo.status,
                 "profile_picture": eo.profile_picture,
                 "bio": eo.bio,
-                "created_at": eo.created_at
+                "created_at": eo.created_at,
+                "events": [
+                    {
+                        "id": event.id,
+                        "title": event.title,
+                        "eo": event.event_organizer.username,
+                        "eo_id": event.event_organizer.id,
+                        "images": [image.path for image in event.images],
+                        "likes": [like.user_id for like in event.likes],
+                        "description": event.description,
+                        "event_date": event.start_date,
+                        "event_date_end": event.end_date,
+                        "created_at": event.created_at
+                    }for event in reversed(eo.event)
+                ]
             }), 200
         return jsonify({"message": "Account not found."}), 404
 

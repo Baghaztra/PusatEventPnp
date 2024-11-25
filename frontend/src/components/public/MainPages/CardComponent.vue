@@ -8,11 +8,11 @@
         style="width: 100%; aspect-ratio: 3 / 4" />
       <div class="col-body d-flex flex-column">
         <h5 class="text-primary" style="font-weight: bold">{{ data.title }}</h5>
-        <span class="text-secondary">By {{ data.eo }}</span>
+        <span class="text-secondary">By <router-link :to="`/organizer/${data.eo_id}`">{{ data.eo }}</router-link></span>
         <span class="text-primary">{{ formatDate(data.event_date) }}</span>
         <div class="mb-1">
           <router-link class="btn btn-primary me-1" to="">Register!</router-link>
-          <router-link class="btn btn-primary" :to="`/event/${data.id}`">More</router-link>
+          <router-link class="btn btn-primary me-1" :to="`/event/${data.id}`">More</router-link>
           <button 
             class="btn"
             :class="{ 'text-primary': isLiked }"
@@ -30,6 +30,7 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
   name: "CardComponent",
@@ -66,7 +67,17 @@ export default {
 
       } catch (error) {
         console.error("Error saat mengirim permintaan like:", error);
-        alert("Gagal mengubah status like.");
+        Swal.fire({
+          title: "Login",
+          text: "Anda harus login untuk berinteraksi",
+          // icon: "error",
+          showCancelButton: false,
+          confirmButtonText: "Login",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/login";
+          }
+        });
       }
     },
     formatDate(dateString) {

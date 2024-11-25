@@ -13,6 +13,7 @@ import Waiting from '@/components/public/LandingPages/Waiting.vue'
 import TablesEo from '@/components/admin/Eventorganizers/TablesEo.vue'
 import HomeLayout from '@/views/HomeLayout.vue'
 import EventDetails from '@/components/public/MainPages/EventDetails.vue'
+import EventOrganizer from '@/components/public/MainPages/EventOrganizer.vue'
 
 const routes = [
   // Main
@@ -35,6 +36,12 @@ const routes = [
     path: '/event/:id',
     name: 'EventPage',
     component: EventDetails,
+    props: true,
+  },
+  {
+    path: '/organizer/:id',
+    name: 'EoPage',
+    component: EventOrganizer,
     props: true,
   },
 

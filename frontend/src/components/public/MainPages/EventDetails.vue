@@ -15,6 +15,11 @@
           justify-content: center;
         ">
         <div class="mask rounded p-5" style="background-color: rgba(0, 0, 0, 0.6)">
+          <div class="position-absolute top-0 start-0 mt-5 ms-5">
+            <button @click="this.$router.go(-1)" class="btn btn-outline-danger">
+              <i class="fas fa-arrow-left me-2"></i> Back
+            </button>
+          </div>
           <div class="d-flex justify-content-center align-items-center h-100">
             <div class="text-white text-center">
               <h1 class="mb-3">{{ event.title }}</h1>
@@ -65,12 +70,20 @@
               <!-- Add new -->
               <div class="d-flex flex-start mb-4">
                 <div class="pt-4">
-                    <img
-                      class="rounded-circle shadow-1-strong me-3"
-                      :src="profilePicture"
-                      alt="avatar"
-                      width="45"
-                      height="45" />
+                  <img
+                    v-if="profilePicture"
+                    class="rounded-circle shadow-1-strong me-3"
+                    :src="profilePicture"
+                    alt="avatar"
+                    width="45"
+                    height="45" />
+                  <img
+                    v-else
+                    src="https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg"
+                    class="rounded-circle shadow-1-strong me-3"
+                    alt="avatar"
+                    width="45"
+                    height="45" />
                 </div>
                 <div class="card w-100">
                   <div class="card-body p-3">
@@ -78,18 +91,20 @@
                       <textarea
                         class="form-control"
                         placeholder="Leave a comment here"
-                        id="new_comment" 
+                        id="new_comment"
                         v-model="comment"
                         @input="adjustHeight($event)"
                         rows="1"
-                        style="overflow:hidden; resize:none;"></textarea>
+                        style="overflow: hidden; resize: none"></textarea>
                       <label for="new_comment">Say something about this?</label>
                     </div>
                     <div class="position-absolute bottom-0 end-0">
-                      <button class="btn btn-sm btn-primary end-0" v-on:click="sendComment"><i class="fa fa-circle-arrow-right"></i></button>
+                      <button class="btn btn-sm btn-primary end-0" v-on:click="sendComment">
+                        <i class="fa fa-circle-arrow-right"></i>
+                      </button>
                     </div>
                     <div class="d-none text-danger" id="validation">
-                      <small>Can't send empty comment</small> 
+                      <small>Can't send empty comment</small>
                     </div>
                   </div>
                 </div>
@@ -99,23 +114,35 @@
               <!-- Another comment -->
               <div class="d-flex flex-start mb-4" v-for="comment in event.comments" :key="comment">
                 <div class="pt-4">
-                    <img
-                      class="rounded-circle shadow-1-strong me-3"
-                      :src="comment.pfp"
-                      alt="avatar"
-                      width="45"
-                      height="45" />
+                  <img
+                    v-if="comment.pfp"
+                    class="rounded-circle shadow-1-strong me-3"
+                    :src="comment.pfp"
+                    alt="avatar"
+                    width="45"
+                    height="45" />
+                  <img
+                    v-else
+                    src="https://i.pinimg.com/736x/cb/45/72/cb4572f19ab7505d552206ed5dfb3739.jpg"
+                    class="rounded-circle shadow-1-strong me-3"
+                    alt="avatar"
+                    width="45"
+                    height="45" />
                 </div>
                 <div class="card w-100">
                   <div class="card-body p-4">
                     <h5>{{ comment.username }}</h5>
-                    <p class="small text-secondary  ">{{ comment.created_at }}</p>
+                    <p class="small text-secondary">{{ comment.created_at }}</p>
                     <p>
                       {{ comment.text }}
                     </p>
                   </div>
-                  <div v-if="comment.user_id == userId" class="position-absolute bottom-0 end-0 me-3 mb-3">
-                    <a v-on:click="deleteComment(comment.id)" class="text-danger"><small>Delete</small></a>
+                  <div
+                    v-if="comment.user_id == userId"
+                    class="position-absolute bottom-0 end-0 me-3 mb-3">
+                    <a v-on:click="deleteComment(comment.id)" class="text-danger"
+                      ><small>Delete</small></a
+                    >
                   </div>
                 </div>
               </div>
@@ -207,40 +234,50 @@ export default {
     },
 
     async sendComment() {
-      if(this.comment != ""){
+      if (this.comment != "") {
         try {
           const payload = {
             message: this.comment,
             event_id: this.event.id,
           };
-  
+
           // Debug: log data yang akan dikirim
           console.log("Payload yang dikirim:", payload);
-  
+
           const response = await axios.post("http://127.0.0.1:5000/comment", payload, {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
           });
-  
+
           console.log(response.data);
-  
+
           this.fetchEventDetails();
 
-          this.comment = ""
-          document.getElementById('validation').classList.add('d-none')
-          document.getElementById('validation').classList.remove('d-block')
-          
-        }catch(error){
+          this.comment = "";
+          document.getElementById("validation").classList.add("d-none");
+          document.getElementById("validation").classList.remove("d-block");
+        } catch (error) {
           if (error.response) {
-            alert(error.response.data.message);
+            // alert(error.response.data.message);
+            Swal.fire({
+              title: "Login",
+              text: "Anda harus login untuk berinteraksi",
+              // icon: "error",
+              showCancelButton: false,
+              confirmButtonText: "Login",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = "/login";
+              }
+            });
           } else {
             console.error(error);
           }
         }
-      }else{
-        document.getElementById('validation').classList.add('d-block')
-        document.getElementById('validation').classList.remove('d-none')
+      } else {
+        document.getElementById("validation").classList.add("d-block");
+        document.getElementById("validation").classList.remove("d-none");
       }
     },
 
@@ -252,17 +289,17 @@ export default {
         confirmButtonText: "Yes",
         cancelButtonText: "Cancel",
         customClass: {
-          popup: 'card',
-          title: 'h5', 
-          confirmButton: 'btn btn-sm btn-danger me-3', 
-          cancelButton: 'btn btn-sm btn-secondary ms-3'
+          popup: "card",
+          title: "h5",
+          confirmButton: "btn btn-sm btn-danger me-3",
+          cancelButton: "btn btn-sm btn-secondary ms-3",
         },
         buttonsStyling: false,
       });
       if (result.isConfirmed) {
         try {
           const response = await axios.delete("http://127.0.0.1:5000/comment", {
-            data: { comment_id: id }, 
+            data: { comment_id: id },
           });
           console.log(response.data);
           this.fetchEventDetails();
@@ -271,27 +308,27 @@ export default {
             text: "The comment has been successfully deleted.",
             icon: "success",
             customClass: {
-              popup: 'card',
-              title: 'h4',
-              content: 'small',
-              confirmButton: 'btn btn-sm btn-success'
+              popup: "card",
+              title: "h4",
+              content: "small",
+              confirmButton: "btn btn-sm btn-success",
             },
-            buttonsStyling: false 
+            buttonsStyling: false,
           });
-        }catch(error){
+        } catch (error) {
           if (error.response) {
             Swal.fire({
-            title: "Error!",
-            text: error.response.data.message,
-            icon: "error",
-            customClass: {
-              popup: 'alert alert-danger',
-              title: 'h4',
-              content: 'small',
-              confirmButton: 'btn btn-sm btn-success'
-            },
-            buttonsStyling: false 
-          });
+              title: "Error!",
+              text: error.response.data.message,
+              icon: "error",
+              customClass: {
+                popup: "alert alert-danger",
+                title: "h4",
+                content: "small",
+                confirmButton: "btn btn-sm btn-success",
+              },
+              buttonsStyling: false,
+            });
           } else {
             console.error(error);
           }
