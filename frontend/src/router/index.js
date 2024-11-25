@@ -75,8 +75,7 @@ const routes = [
   {
     path: '/waiting',
     name: 'EoWaitingPage',
-    component: Waiting,
-    beforeEnter: auth
+    component: Waiting, 
   },
 
 

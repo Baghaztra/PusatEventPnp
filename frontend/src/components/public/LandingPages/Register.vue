@@ -113,8 +113,16 @@ export default {
 
           // Pindah ke halaman /home
           console.log(response.data.message);
-          this.$router.push("/waiting");
-
+          if (response.status === 201) {
+            const { user_id, role } = response.data;
+            this.$router.push({
+              path: "/waiting",
+              query: {
+                user_id: user_id,
+                role: role,
+              },
+            });
+          }
         } catch (error) {
           if (error.response) {
             Swal.fire({

@@ -166,12 +166,14 @@ def register():
 
         try:
             mail.send(msg)
-            return jsonify({"message": "Registration successful. Please check your email to verify your account."}), 201
+            return jsonify({
+                "message": "Registration successful. Please check your email to verify your account.",
+                "user_id": user.id,
+                "role": "user"
+            }), 201
         except Exception as e:
             print(e)
             return jsonify({"message": "Failed to send verification email."}), 500
-    
-        # return jsonify({"message": "User registered successfully", "token": access_token}), 201
     else:
         return jsonify({"message": "Email already registered."}), 400
     
@@ -232,3 +234,46 @@ def get_profile():
         }), 200
     else:
         return jsonify({"message": "User not found."}), 404
+
+@login_bp.route('/resend', methods=['POST'])
+def resend():
+    data = request.get_json()
+    user_id = data['id']
+    role = data['role']
+    
+    if(role == 'user'):
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"message": "User not found"}), 400
+    elif(role == 'event organizer'):
+        user = EventOrganizer.query.get(user_id)
+        if not user:
+            return jsonify({"message": "Event organizer not found"}), 400
+    
+    access_token = create_access_token(
+            identity={'user_id': user_id, 'username': user.username, 'role': role})
+    
+    msg_title = "Konfirmasi Akun Anda"
+    sender = "noreply@app.com"
+    verification_link = f"http://localhost:5000/verify/{access_token}"
+
+    msg = Message(
+        msg_title,
+        sender=sender,
+        recipients=[user.email]
+    )
+    msg_body = f"Halo {user.username},\n\nKlik link berikut untuk memverifikasi akun Anda:"
+    data = {
+        'app_name': "Pusat Event Politeknik",
+        'title': msg_title,
+        'body': msg_body,
+        'link': verification_link
+    }
+    msg.html = render_template("email.html", data=data)
+
+    try:
+        mail.send(msg)
+        return jsonify({"message": "Registration successful. Please check your email to verify your account."}), 201
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Failed to send verification email."}), 500
