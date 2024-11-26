@@ -44,7 +44,7 @@ def seed_event_organizers(n=5):
             email=faker.email(),
             password=faker.password(),
             status='Active',
-            profile_picture=faker.image_url(),
+            profile_picture = "https://loremflickr.com/360/360",
             bio=faker.text(),
             created_at=datetime.now()
         )
@@ -58,6 +58,8 @@ def seed_events(n=10):
         event = Event(
             eo_id=random.choice(eos).id,
             title=faker.catch_phrase(),
+            poster="https://loremflickr.com/640/360",
+            registration_url=faker.url(),
             description=" ".join(faker.paragraphs(5)),
             start_date=faker.date_time_this_year(),
             end_date=faker.date_time_this_year(),
@@ -99,7 +101,7 @@ def seed_images(n=20):
     for _ in range(n):
         image = Image(
             event_id=random.choice(events).id,
-            path= "https://loremflickr.com/640/360",
+            path= "https://loremflickr.com/360/360",
             created_at=datetime.now()
         )
         db.session.add(image)
@@ -120,14 +122,14 @@ def seed_follows(n=20):
 
 def run_seeders():
     with app.app_context():
-        # seed_test_user()
-        # seed_users()
-        # seed_event_organizers()
-        # seed_events()
-        # seed_likes(100)
-        # seed_follows(100)
-        # seed_comments(100)
-        # seed_images(50)
+        seed_test_user()
+        seed_users()
+        seed_event_organizers()
+        seed_events()
+        seed_likes(100)
+        seed_follows(100)
+        seed_comments(100)
+        seed_images(50)
         print("Seeding complete.")
 
 if __name__ == '__main__':

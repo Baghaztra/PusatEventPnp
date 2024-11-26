@@ -2,7 +2,7 @@
   <div>
     <div class="card p-2">
       <img
-        :src="data.images[0]"
+        :src="data.poster"
         alt="Event Image"
         class="rounded"
         style="width: 100%; aspect-ratio: 3 / 4" />
@@ -11,7 +11,7 @@
         <span class="text-secondary">By <router-link :to="`/organizer/${data.eo_id}`">{{ data.eo }}</router-link></span>
         <span class="text-primary">{{ formatDate(data.event_date) }}</span>
         <div class="mb-1">
-          <router-link class="btn btn-primary me-1" to="">Register!</router-link>
+          <a class="btn btn-primary me-1" :href="data.registration_url" target="_blank">Register!</a>
           <router-link class="btn btn-primary me-1" :to="`/event/${data.id}`">More</router-link>
           <button 
             class="btn"

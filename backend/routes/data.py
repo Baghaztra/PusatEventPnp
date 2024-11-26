@@ -15,12 +15,11 @@ def event_latest():
             "title": event.title,
             "eo": event.event_organizer.username,
             "eo_id": event.event_organizer.id,
-            "images": [image.path for image in event.images],
             "likes": [like.user_id for like in event.likes],
-            "description": event.description,
+            "poster": event.poster,
+            "registration_url": event.registration_url,
             "event_date": event.start_date,
-            "event_date_end": event.end_date,
-            "created_at": event.created_at
+            "event_date_end": event.end_date
         }
         for event in events
     ]
@@ -49,6 +48,8 @@ def event_details(id):
                     } for comment in reversed(event.comments)
                 ],
             "description": event.description,
+            "poster": event.poster,
+            "registration_url": event.registration_url,
             "event_date": event.start_date,
             "event_date_end": event.end_date,
             "created_at": event.created_at
@@ -158,12 +159,12 @@ def event_organizers():
                         "title": event.title,
                         "eo": event.event_organizer.username,
                         "eo_id": event.event_organizer.id,
-                        "images": [image.path for image in event.images],
                         "likes": [like.user_id for like in event.likes],
                         "description": event.description,
+                        "poster": event.poster,
+                        "registration_url": event.registration_url,
                         "event_date": event.start_date,
-                        "event_date_end": event.end_date,
-                        "created_at": event.created_at
+                        "event_date_end": event.end_date
                     }for event in reversed(eo.event)
                 ]
             }), 200

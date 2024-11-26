@@ -2,19 +2,8 @@
   <HomeLayout>
     <div class="container">
       <!-- Hero -->
-      <div
-        class="bg-image"
-        style="
-          background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/041.webp');
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: cover;
-          height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        ">
-        <div class="mask rounded p-5" style="background-color: rgba(0, 0, 0, 0.6)">
+      <div class="bg-image bg-pkm">
+        <div class="mask rounded p-5">
           <div class="position-absolute top-0 start-0 mt-5 ms-5">
             <button @click="this.$router.go(-1)" class="btn btn-outline-danger">
               <i class="fas fa-arrow-left me-2"></i> Back
@@ -24,7 +13,12 @@
             <div class="text-white text-center">
               <h1 class="mb-3">{{ event.title }}</h1>
               <h4 class="mb-3">{{ formatDate(event.event_date) }}</h4>
-              <a class="btn btn-outline-primary btn-lg" href="">Register!</a>
+              <a
+                class="btn btn-outline-primary btn-lg"
+                :href="event.registration_url"
+                target="_blank"
+                >Register!</a
+              >
             </div>
           </div>
         </div>
@@ -349,6 +343,18 @@ export default {
 </script>
 
 <style scoped>
+.bg-pkm {
+  background-image: url("../../../../public/assets/img/bg-pkm.jpg");
+  background-color: rgba(0, 0, 0, 0.6);
+  background-blend-mode: overlay;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .link-muted {
   color: #aaa;
 }

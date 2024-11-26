@@ -18,14 +18,10 @@ migrate:
 flask db init
 
 setiap ada perubahan:
-flask db migrate
-
+flask db migrate -m "Deskripsi perubahan model"
 flask db upgrade
 
 program kali ini:
 python migrate-fresh.py
 
 python seeder.py
-
-
-password

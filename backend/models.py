@@ -61,6 +61,8 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     eo_id = db.Column(db.Integer, db.ForeignKey('event_organizers.id'), nullable=False)
     title = db.Column(db.String(255), nullable=False)
+    poster = db.Column(db.String(255), nullable=False)
+    registration_url = db.Column(db.String(255), nullable=True)
     description = db.Column(db.Text)
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
