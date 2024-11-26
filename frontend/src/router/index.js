@@ -14,6 +14,7 @@ import TablesEo from '@/components/admin/Eventorganizers/TablesEo.vue'
 import HomeLayout from '@/views/HomeLayout.vue'
 import EventDetails from '@/components/public/MainPages/EventDetails.vue'
 import EventOrganizer from '@/components/public/MainPages/EventOrganizer.vue'
+import CreateEvent from '@/components/public/MainPages/CreateEvent.vue'
 
 const routes = [
   // Main
@@ -73,8 +74,13 @@ const routes = [
     beforeEnter: auth
   },
   {
+    path: '/create-event',
+    name: 'CreateEventPage',
+    component: CreateEvent, 
+  },
+  {
     path: '/waiting',
-    name: 'EoWaitingPage',
+    name: 'WaitingPage',
     component: Waiting, 
   },
 

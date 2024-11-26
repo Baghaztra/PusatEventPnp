@@ -47,6 +47,9 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/">Landing page</router-link>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/create-event">Create Event</router-link>
+            </li>
             <li class="nav-item" v-if="!isLoggedIn">
               <!-- Show Login and Sign Up buttons if not logged in -->
               <router-link to="/login" class="nav-link text-primary me-2">Login</router-link>
