@@ -21,11 +21,11 @@
           </fieldset>
           <fieldset v-show="step === 2">
             <label for="eventDescription" class="form-label">Description</label>
-            <ckeditor
+            <!-- <ckeditor
               :editor="editor"
               v-model="formData.description"
-              :config="editorConfig"
-            ></ckeditor>
+              :config="editorConfig">
+            </ckeditor> -->
             <div class="d-block mt-3">
               <button class="btn btn-outline-secondary me-2" v-on:click="prevStep">prev</button>
               <button class="btn btn-warning" v-on:click="nextStep">next</button>
@@ -52,14 +52,14 @@
 
 <script>
 import HomeLayout from "@/views/HomeLayout.vue";
-import { CKEditor } from "@ckeditor/ckeditor5-vue";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+// import { CKEditor } from "@ckeditor/ckeditor5-vue";
+// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default {
   name: "CreateEvent",
   components: {
     HomeLayout,
-    CKEditor
+    // CKEditor
   },
   data() {
     return {
@@ -67,10 +67,10 @@ export default {
       formData: {
         title: "",
       },
-      editor: ClassicEditor, // Instance CKEditor
-      editorConfig: {
-        toolbar: ["heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "|", "undo", "redo"],
-      },
+      // editor: ClassicEditor, // Instance CKEditor
+      // editorConfig: {
+      //   toolbar: ["heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "|", "undo", "redo"],
+      // },
       selectedFile: null
     };
   },
