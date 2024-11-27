@@ -1,6 +1,6 @@
 <template>
   <HomeLayout>
-    <div class="container">
+    <div class="container" style="min-height: 75vh;">
       <div class="position-absolute top-0 start-0 mt-5 ms-5">
         <button @click="this.$router.go(-1)" class="btn btn-outline-danger">
           <i class="fas fa-arrow-left me-2"></i> Back
@@ -16,8 +16,8 @@
             <div class="ml-3 w-100">
               <div class="d-flex align-items-center">
                 <h4 class="mb-0 mt-0 d-inline me-3">{{ eodata.username }}</h4>
-                <button v-if="!isOwner" class="btn btn-sm btn-primary d-inline" v-on:click="toggleFollow">Follow</button>
-                <button v-else-if="isFollowing" class="btn btn-sm btn-outline-primary d-inline" v-on:click="toggleFollow">Unfollow</button>
+                <button v-if="this.role != 'event organizer' && !isFollowing" class="btn btn-sm btn-primary d-inline" v-on:click="toggleFollow">Follow</button>
+                <button v-else-if="this.role != 'event organizer' && isFollowing" class="btn btn-sm btn-outline-primary d-inline" v-on:click="toggleFollow">Unfollow</button>
               </div>
               <div class="d-flex rounded stats">
                 <div class="d-inline pe-2">
@@ -39,17 +39,20 @@
         </div>
       </div>
 
-      <!-- Gallery -->
+      <!-- Events -->
       <h3>Events</h3>
-      <div class="row">
+      <div v-if="eodata.events && eodata.events.length == 0">
+        <h6 class="text-secondary">No event published yet..</h6>
+      </div>
+      <div v-else class="row">
         <CardComponent
           v-for="(event, index) in eodata.events"
           :key="index"
           :data="event"
           class="col-md-4 mb-3"
-          @refresh-events="fetchEvents" />
+          @refresh-events="fetchEoData" />
       </div>
-      <!-- Gallery -->
+      <!-- Events -->
     </div>
   </HomeLayout>
 </template>
@@ -99,9 +102,9 @@ export default {
         console.error("Error fetching event-organizer details:", error);
       } finally {
         this.loading = false;
-        if(this.role == 'event organizer' && this.userId == this.eodata.id){
-          this.isOwner = true;
-        }
+      }
+      if(this.role == 'event organizer' && this.userId == this.eodata.id){
+        this.isOwner = true;
       }
     },
 

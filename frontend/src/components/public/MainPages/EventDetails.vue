@@ -13,11 +13,19 @@
             <div class="text-white text-center">
               <h1 class="mb-3">{{ event.title }}</h1>
               <h4 class="mb-3">{{ formatDate(event.event_date) }}</h4>
-              <a
+              <a 
+                v-if="event.registration_url"
                 class="btn btn-outline-primary btn-lg"
                 :href="event.registration_url"
                 target="_blank"
-                >Register!</a
+                >Register</a
+              >
+              <a
+                v-else-if="userRole == 'event organizer' && userId == event.eo_id"
+                class="btn btn-outline-warning btn-lg"
+                :href="event.registration_url"
+                target="_blank"
+                >Add a registration link</a
               >
             </div>
           </div>

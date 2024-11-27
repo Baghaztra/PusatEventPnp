@@ -1,6 +1,12 @@
 <template>
   <div>
     <div class="card p-2">
+      <button
+        class="btn btn-danger me-1 mt-1 position-absolute top-0 end-0"
+        v-if="userRole == 'event organizer' && userId == data.eo_id"
+        v-on:click="deleteEvent">
+        <i class="fas fa-trash-can"></i>
+      </button>
       <img
         :src="data.poster"
         alt="Event Image"
@@ -8,20 +14,29 @@
         style="width: 100%; aspect-ratio: 3 / 4" />
       <div class="col-body d-flex flex-column">
         <h5 class="text-primary" style="font-weight: bold">{{ data.title }}</h5>
-        <span class="text-secondary">By <router-link :to="`/organizer/${data.eo_id}`">{{ data.eo }}</router-link></span>
+        <span class="text-secondary"
+          >By <router-link :to="`/organizer/${data.eo_id}`">{{ data.eo }}</router-link></span
+        >
         <span class="text-primary">{{ formatDate(data.event_date) }}</span>
         <div class="mb-1">
-          <a class="btn btn-primary me-1" :href="data.registration_url" target="_blank">Register!</a>
-          <router-link class="btn btn-primary me-1" :to="`/event/${data.id}`">More</router-link>
-          <button 
-            class="btn"
-            :class="{ 'text-primary': isLiked }"
-            @click="toggleLike"
+          <a
+            class="btn btn-primary me-1"
+            v-if="data.registration_url"
+            :href="data.registration_url"
+            target="_blank"
+            >Register</a
           >
+          <a
+            class="btn btn-warning me-1"
+            v-else-if="userRole == 'event organizer' && userId == data.eo_id"
+            :href="data.registration_url"
+            >Add a registration</a
+          >
+          <router-link class="btn btn-primary me-1" :to="`/event/${data.id}`">More</router-link>
+          <button class="btn" :class="{ 'text-primary': isLiked }" @click="toggleLike">
             <span class="me-1">{{ data.likes?.length ?? 0 }}</span>
-            <i :class="isLiked? 'fas fa-thumbs-up' : 'far fa-thumbs-up'"></i>
+            <i :class="isLiked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'"></i>
           </button>
-
         </div>
       </div>
     </div>
@@ -29,8 +44,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import axios from "axios";
+import Swal from "sweetalert2";
 
 export default {
   name: "CardComponent",
@@ -44,40 +59,106 @@ export default {
     return {
       isLiked: false,
       userId: null,
+      userRole: null,
     };
   },
   methods: {
-    async toggleLike() {
+    async deleteEvent() {
       try {
-        // const response = await axios.post(
-        await axios.post(
-          `${process.env.VUE_APP_BACKEND}/like/${this.data.id}`,
-          {}, // Body kosong
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        // console.log(response.data.msg);
-        this.isLiked = !this.isLiked; 
-        // console.log(this.isLiked);
-        this.$emit('refresh-events');
-        // this.isLiked = response.data.liked; 
-
-      } catch (error) {
-        console.error("Error saat mengirim permintaan like:", error);
-        Swal.fire({
-          title: "Login",
-          text: "Anda harus login untuk berinteraksi",
-          // icon: "error",
-          showCancelButton: false,
-          confirmButtonText: "Login",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = "/login";
-          }
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "This post will gone forever",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Delete it",
+          cancelButtonText: "Cancel",
+          customClass: {
+            confirmButton: "btn btn-danger me-3",
+            cancelButton: "btn btn-success ms-3",
+          },
+          buttonsStyling: false,
         });
+        if (result.isConfirmed) {
+          const response = await axios.delete(`${process.env.VUE_APP_BACKEND}/delete/event?id=${this.data.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log(response);
+          if (response.status == 200) {
+            Swal.fire({
+              title: "Deleted",
+              text: response.data.message,
+              icon: "success"
+            });
+            this.$emit("refresh-events");
+          }
+          else {
+            Swal.fire({
+              title: "Failed",
+              text: response.data.message,
+              icon: "error"
+            });
+          }
+        }
+      } catch (error) {
+        console.log("error",error);
+        
+        Swal.fire({
+          title: "Error!",
+          text: error,
+          icon: "error",
+          customClass: {
+            popup: "alert alert-danger",
+            title: "h4",
+            content: "small",
+            confirmButton: "btn btn-sm btn-success",
+          },
+          buttonsStyling: false,
+        });
+      }
+    },
+    async toggleLike() {
+      if (this.userRole && this.userRole == "event organizer") {
+        Swal.fire({
+          title: "Sorry :(",
+          icon: "warning",
+          text: "Event organizer cannot give a like or comment",
+          // icon: "error",
+        });
+      } else {
+        try {
+          // const response = await axios.post(
+          await axios.post(
+            `${process.env.VUE_APP_BACKEND}/like/${this.data.id}`,
+            {}, // Body kosong
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          // console.log(response.data.msg);
+          this.isLiked = !this.isLiked;
+          // console.log(this.isLiked);
+          this.$emit("refresh-events");
+          // this.isLiked = response.data.liked;
+        } catch (error) {
+          console.error("Error saat mengirim permintaan like:", error);
+          Swal.fire({
+            title: "Login",
+            text: "Login to interact with this event",
+            // icon: "error",
+            showCancelButton: false,
+            confirmButtonText: "Login",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "/login";
+            }
+          });
+        }
       }
     },
     formatDate(dateString) {
@@ -110,16 +191,17 @@ export default {
         },
       });
 
-      this.userId = response.data.user_id; // Simpan ID user
-      
-      this.isLiked = this.data.likes.includes(this.userId); 
+      this.userId = response.data.user_id;
+      this.userRole = response.data.role;
+
+      this.isLiked = this.data.likes.includes(this.userId);
     } catch (error) {
       console.error("Error saat mendapatkan profil:", error.message);
     }
   },
   mounted() {
     this.isLiked = !!this.data.isLiked;
-  }
+  },
 };
 </script>
 

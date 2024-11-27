@@ -3,7 +3,7 @@ from flask_mail import Message
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from models import EventOrganizer, TemporaryImage
+from models import EventOrganizer, TemporaryImage, Event, Like, Comment, Image
 from app import db, mail
 import os
 
@@ -150,3 +150,41 @@ def file_delete():
         return jsonify({'message': 'File deleted successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@eo_bp.route('/delete/event', methods=['DELETE'])
+@jwt_required()
+def event_delete():
+    try:
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+        role = identity.get('role')
+        event_id = request.args['id']
+        
+        event = Event.query.get(event_id)
+        if (not event):
+            return jsonify({'message': "Event not found"}), 404
+        
+        if(user_id == event.eo_id and role == 'event organizer'):
+            likes = Like.query.filter_by(event_id=event_id)
+            comments = Comment.query.filter_by(event_id=event_id)
+            images = Image.query.filter_by(event_id=event_id)
+            
+            for image in images:
+                if image.path and os.path.exists(image.path.replace('http://localhost:5000/', '')):
+                    os.remove(image.path.replace('http://localhost:5000/', ''))
+            
+            if event.poster and os.path.exists(event.poster.replace('http://localhost:5000/', '')):
+                os.remove(event.poster.replace('http://localhost:5000/', ''))
+                
+            likes.delete() 
+            comments.delete()
+            images.delete()
+            db.session.delete(event)
+            db.session.commit()
+            
+            return jsonify({'message': "Event has been deleted."}), 200
+        else:    
+            return jsonify({'message': "Only creator can delete this"}), 401
+    except Exception as e:
+        print("error deleting event",e)
+        return jsonify({'message': str(e)}), 500
