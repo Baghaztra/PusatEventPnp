@@ -112,8 +112,8 @@ def login_eo():
     if eo and eo.verify_password(password):
         if eo.status == "Active":
             access_token = create_access_token(
-                identity={'user_id': eo.id, 'username': eo.username})
-            return jsonify({"message": "Login success", "token": access_token, "role":"event organizer"}), 200
+                identity={'user_id': eo.id, 'username': eo.username, 'role':"event organizer"})
+            return jsonify({"message": "Login success", "token": access_token}), 200
         else:
             return jsonify({"message": "The account is not active."}), 401
     else:

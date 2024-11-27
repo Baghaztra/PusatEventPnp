@@ -14,19 +14,19 @@
           <fieldset v-show="step === 1">
             <div class="mb-3">
               <label for="validationCustom01" class="form-label">Title</label>
-              <input type="text" class="form-control" placeholder="Workshop..." value="" required />
+              <input type="text" class="form-control" v-model="formData.title" placeholder="Workshop..." value="" required />
             </div>
             <div class="mb-3">
               <label for="validationCustom01" class="form-label">Poster</label>
-              <input type="file" class="form-control" required />
+              <input type="file" class="form-control" @change="inputPoster" accept="image/*" required />
             </div>
             <div class="mb-3">
               <label for="validationCustom01" class="form-label">Start Date</label>
-              <input type="date" class="form-control" value="" required />
+              <input type="date" class="form-control" v-model="formData.start_date" value="" required />
             </div>
             <div class="mb-3">
               <label for="validationCustom01" class="form-label">End Date <span class="small text-secondary">(leave it blank if the event is one-day event)</span></label>
-              <input type="date" class="form-control" value="" />
+              <input type="date" class="form-control" v-model="formData.end_date" value="" />
             </div>
             <div class="d-block mt-3">
               <button class="btn btn-warning" v-on:click="nextStep">next</button>
@@ -122,7 +122,7 @@
           </fieldset>
           <fieldset v-show="step === 3">
             <label for="eventImage" class="form-label">Give us picture about this event, such as road map etc.</label>
-            <input type="file" id="eventImage" class="form-control" @change="handleFileUpload" />
+            <!-- <input type="file" id="eventImage" class="form-control" @change="inputPoster" /> -->
             <div class="d-block mt-3">
               <button class="btn btn-outline-secondary me-2" v-on:click="prevStep">prev</button>
               <button class="btn btn-primary" v-on:click="submitForm">Submit</button>
@@ -154,14 +154,22 @@ export default {
       step: 1,
       formData: {
         title: "",
+        start_date: "",
+        end_date: "",
       },
       editor: null,
-      selectedFile: null,
+      posterFile: null,
     };
   },
   methods: {
-    handleFileUpload(event) {
-      this.selectedFile = event.target.files[0];
+    inputPoster(event) {
+      const file = event.target.files[0]; 
+      if (file) {
+        this.posterFile = file;
+        console.log("File masok.");
+      } else {
+        console.error("Tidak ada file yang dipilih.");
+      }
     },
     nextStep() {
       this.step++;
@@ -170,27 +178,29 @@ export default {
       this.step--;
     },
     async submitForm() {
-      if (!this.selectedFile) {
+      if (!this.posterFile) {
         alert("Please upload an image!");
         return;
       }
 
-      const event = new FormData();
-      event.append("title", this.formData.title);
-      event.append("image", this.selectedFile);
-
+      const formData = new FormData();
+      formData.append("title", this.formData.title);
+      formData.append("poster", this.posterFile);
+      formData.append("start_date", this.formData.start_date);
+      formData.append("end_date", this.formData.end_date);
+      formData.append("description", this.editor ? this.editor.getHTML() : "");
       try {
-        const response = await fetch(`${process.env.VUE_APP_BACKEND}/api/events`, { //belum kealr
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.VUE_APP_BACKEND}/event`, {
           method: "POST",
-          body: event,
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+          body: formData,
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to submit form");
-        }
-
         const result = await response.json();
-        alert("Form submitted successfully!");
+
         console.log(result);
         this.step++;
       } catch (error) {

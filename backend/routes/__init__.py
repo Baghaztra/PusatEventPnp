@@ -11,9 +11,14 @@ def register_route(app):
     def index():
         return "Running abangkuh"
 
-    @app.route('/uploads/<foldername>/<filename>')
-    def uploaded_file(filename, foldername):
-        return send_from_directory(os.path.join(current_app.config['UPLOAD_FOLDER'], foldername), filename)
+    @app.route('/uploads/eo_pfp/<filename>')
+    def profile(filename):
+        return send_from_directory(os.path.join(current_app.config['UPLOAD_FOLDER'], "eo_pfp"), filename)
+    
+    @app.route('/uploads/events/<id>/<filename>')
+    def event_picture(id, filename):
+        upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], "events", id)
+        return send_from_directory(upload_folder, filename)
     
     app.register_blueprint(login_bp)
     app.register_blueprint(data_bp)

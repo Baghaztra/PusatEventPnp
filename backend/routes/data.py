@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from models import *
 from app import db
+from flask_jwt_extended import jwt_required, get_jwt_identity
+import os
 
 data_bp = Blueprint('data', __name__)
 
@@ -57,6 +59,57 @@ def event_details(id):
     
     return jsonify({"message": "User not found."}), 404
 
+@data_bp.route('/event', methods=['POST'])
+@jwt_required() 
+def create_enent():
+    identity = get_jwt_identity()
+    
+    if(identity.get('role') != "event organizer"):
+        return jsonify({"message": "Only EO can create event"}), 401
+    
+    eo_id = identity.get('user_id')
+    title = request.form.get('title')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+    description = request.form.get('description')
+
+    poster = request.files.get('poster')
+
+    new_event = Event(
+        eo_id = eo_id,
+        title = title,
+        poster = "not yet",
+        description = description,
+        start_date = start_date,
+        end_date = end_date,
+        created_at = datetime.now()
+    )
+        
+    db.session.add(new_event)
+    db.session.commit()
+    
+    if poster:
+        upload_folder = f'uploads/events/{new_event.id}/'
+        os.makedirs(upload_folder, exist_ok=True) 
+        file_path = os.path.join(upload_folder, poster.filename)
+        poster.save(file_path)
+        poster_url = "http://localhost:5000/" + file_path
+        
+        new_event.poster = poster_url
+        db.session.add(new_event)
+        db.session.commit()
+    
+    data = {
+        "eo_id": new_event.eo_id,
+        "eo_name": new_event.event_organizer.username,
+        "title": new_event.title,
+        "start_date": new_event.start_date,
+        "end_date": new_event.end_date,
+        "description": new_event.description,
+        "poster": new_event.poster,
+    }
+    return jsonify(data)
+
 @data_bp.route('/users', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def users():
     if request.method == 'POST':
@@ -67,7 +120,8 @@ def users():
             email=data.get('email'),
             password=data.get('password'),
             profile_picture=data.get('profile_picture'),
-            role=data.get('role')
+            role=data.get('role'),
+            created_at= datetime.now()
         )
         db.session.add(new_user)
         db.session.commit()
@@ -80,10 +134,10 @@ def users():
                 "id": user.id,
                 "username": user.username,
                 "email": user.email,
-                "status": "Active",
+                "status": user.status,
                 "profile_picture": user.profile_picture,
-                "role": "user",
-                "created_at": datetime.now()
+                "role": user.role,
+                "created_at": user.created_at
             }), 200
         return jsonify({"message": "User not found."}), 404
 

@@ -73,7 +73,7 @@ import Swal from "sweetalert2";
     methods: {
       async login() {
         try {
-          const response = await axios.post(`${process.env.VUE_APP_BACKEND}/eo-login"`, {
+          const response = await axios.post(`${process.env.VUE_APP_BACKEND}/eo-login`, {
             email: this.email,
             password: this.password,
           });

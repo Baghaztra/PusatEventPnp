@@ -28,7 +28,7 @@
         <div class="row">
           <div class="col-md-8">
             <h3 class="text-primary">{{ event.title }}</h3>
-            <p>{{ event.description }}</p>
+            <div v-html="event.description"></div>
           </div>
           <div class="col-md-4">
             <img src="" alt="" />
