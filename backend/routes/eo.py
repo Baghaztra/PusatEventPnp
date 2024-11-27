@@ -1,14 +1,18 @@
 from flask import Blueprint, request, jsonify, render_template
 from flask_mail import Message
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from models import EventOrganizer
+from models import EventOrganizer, TemporaryImage
 from app import db, mail
+import os
 
 eo_bp = Blueprint('eo', __name__)
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
+
+UPLOAD_FOLDER = 'uploads\\temporary_images'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -85,3 +89,64 @@ def eo_register():
     except Exception as e:
         print(e)
         return jsonify({"message": "Failed to send verification email."}), 500
+
+@eo_bp.route('/file/upload', methods=['POST'])
+@jwt_required()
+def file_upload():
+    try:
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+
+        if 'test' not in request.files:
+            return jsonify({'error': 'No file part in request'}), 400
+
+        file = request.files['test']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+
+        new_image = TemporaryImage(
+            eo_id=user_id,
+            path=filepath,
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+        db.session.add(new_image)
+        db.session.commit()
+
+        return jsonify({'message': 'File uploaded successfully', 'image_id': new_image.id}), 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': str(e)}), 500
+    
+@eo_bp.route('/file/delete', methods=['DELETE'])
+@jwt_required()
+def file_delete():
+    # print("Request method:", request.method)
+    # print("Request args:", request.args)
+    # print("Request form:", request.form)
+    # print("Request data:", request.data)
+    try:
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+
+        image_id = request.data.decode('utf-8')
+        if not image_id:
+            return jsonify({'error': 'Image ID is required'}), 400
+
+        image = TemporaryImage.query.filter_by(id=image_id, eo_id=user_id).first()
+        if not image:
+            return jsonify({'error': 'File not found or not authorized to delete'}), 404
+
+        if os.path.exists(image.path):
+            os.remove(image.path)
+
+        db.session.delete(image)
+        db.session.commit()
+
+        return jsonify({'message': 'File deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

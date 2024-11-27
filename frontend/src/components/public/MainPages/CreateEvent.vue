@@ -1,6 +1,6 @@
 <template>
   <HomeLayout>
-    <div class="container my-3" style="min-height: 80vh;">
+    <div class="container my-3" style="min-height: 80vh">
       <div class="row justify-content-center">
         <div class="col-xl-6 col-lg-8 col-md-10 shadow p-3">
           <h3 class="text-primary">Publish New Event</h3>
@@ -14,18 +14,39 @@
           <fieldset v-show="step === 1">
             <div class="mb-3">
               <label for="validationCustom01" class="form-label">Title</label>
-              <input type="text" class="form-control" v-model="formData.title" placeholder="Workshop..." value="" required />
+              <input
+                type="text"
+                class="form-control"
+                v-model="formData.title"
+                placeholder="Workshop..."
+                value=""
+                required />
             </div>
             <div class="mb-3">
               <label for="validationCustom01" class="form-label">Poster</label>
-              <input type="file" class="form-control" @change="inputPoster" accept="image/*" required />
+              <input
+                type="file"
+                class="form-control"
+                @change="inputPoster"
+                accept="image/*"
+                required />
             </div>
             <div class="mb-3">
               <label for="validationCustom01" class="form-label">Start Date</label>
-              <input type="date" class="form-control" v-model="formData.start_date" value="" required />
+              <input
+                type="date"
+                class="form-control"
+                v-model="formData.start_date"
+                value=""
+                required />
             </div>
             <div class="mb-3">
-              <label for="validationCustom01" class="form-label">End Date <span class="small text-secondary">(leave it blank if the event is one-day event)</span></label>
+              <label for="validationCustom01" class="form-label"
+                >End Date
+                <span class="small text-secondary"
+                  >(leave it blank if the event is one-day event)</span
+                ></label
+              >
               <input type="date" class="form-control" v-model="formData.end_date" value="" />
             </div>
             <div class="d-block mt-3">
@@ -33,10 +54,14 @@
             </div>
           </fieldset>
           <fieldset v-show="step === 2">
-            <label for="eventDescription" class="form-label">Tell us everything about this event</label>
+            <label for="eventDescription" class="form-label"
+              >Tell us everything about this event</label
+            >
             <div class="editor-container card bg-light">
               <!-- Menu bar -->
-              <div class="editor-menu-bar btn-toolbar d-flex justify-content-between" role="toolbar">
+              <div
+                class="editor-menu-bar btn-toolbar d-flex justify-content-between"
+                role="toolbar">
                 <!-- Font -->
                 <div class="btn-group me-2" role="group">
                   <button
@@ -121,8 +146,18 @@
             </div>
           </fieldset>
           <fieldset v-show="step === 3">
-            <label for="eventImage" class="form-label">Give us picture about this event, such as road map etc.</label>
-            <!-- <input type="file" id="eventImage" class="form-control" @change="inputPoster" /> -->
+            <label for="eventImage" class="form-label"
+              >Give us picture about this event, such as road map etc.</label
+            >
+            <file-pond
+              name="test"
+              ref="pond"
+              class-name="my-pond"
+              label-idle="Drop files here..."
+              allow-multiple="true"
+              accepted-file-types="image/jpeg, image/png"
+              v-bind:files="myFiles"
+              v-on:init="handleFilePondInit" />
             <div class="d-block mt-3">
               <button class="btn btn-outline-secondary me-2" v-on:click="prevStep">prev</button>
               <button class="btn btn-primary" v-on:click="submitForm">Submit</button>
@@ -137,17 +172,28 @@
 
 <script>
 import HomeLayout from "@/views/HomeLayout.vue";
+// Tiptap
 import { Editor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import Heading from "@tiptap/extension-heading";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
+import vueFilePond from "vue-filepond";
+// Filepond
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.esm.js";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+import { setOptions } from "filepond";
+
+const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
 export default {
   name: "CreateEvent",
   components: {
     HomeLayout,
     EditorContent,
+    FilePond,
   },
   data() {
     return {
@@ -159,17 +205,23 @@ export default {
       },
       editor: null,
       posterFile: null,
+      myFiles: null
     };
   },
   methods: {
     inputPoster(event) {
-      const file = event.target.files[0]; 
+      const file = event.target.files[0];
       if (file) {
         this.posterFile = file;
         console.log("File masok.");
       } else {
         console.error("Tidak ada file yang dipilih.");
       }
+    },
+    handleFilePondInit: function () {
+      console.log("FilePond has initialized");
+
+      this.$refs.pond.getFiles();
     },
     nextStep() {
       this.step++;
@@ -194,7 +246,7 @@ export default {
         const response = await fetch(`${process.env.VUE_APP_BACKEND}/event`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         });
@@ -223,6 +275,28 @@ export default {
     });
     this.editor.on("focus", () => {
       this.$el.querySelector(".ProseMirror").style.outline = "none";
+    });
+
+    setOptions({
+      server: {
+        process: {
+          url: `${process.env.VUE_APP_BACKEND}/file/upload`,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          onload: (response) => {
+            const { image_id } = JSON.parse(response);
+            return image_id; 
+          }
+        },
+        revert: {
+          url: `${process.env.VUE_APP_BACKEND}/file/delete`,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      },
+      allowMultiple: true,
     });
   },
   beforeUnmount() {
