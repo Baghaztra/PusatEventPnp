@@ -47,7 +47,10 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/">Landing page</router-link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="role == 'event organizer'">
+              <router-link class="nav-link" :to="'/organizer/'+user_id">Profile</router-link>
+            </li>
+            <li class="nav-item" v-if="role == 'event organizer'">
               <router-link class="nav-link" to="/create-event">Create Event</router-link>
             </li>
             <li class="nav-item" v-if="!isLoggedIn">
@@ -75,9 +78,11 @@ export default {
   name: "NavbarComponent",
   data() {
     return {
-      isLoggedIn: false, // Status login pengguna
-      profilePicture: "", // URL gambar profil pengguna
-      userName: "", // Nama pengguna
+      isLoggedIn: false,
+      id: "",
+      profilePicture: "",
+      userName: "",
+      role: "",
     };
   },
   mounted() {
@@ -100,12 +105,12 @@ export default {
 
         // Jika respons berhasil (status 200), langsung ambil data
         const data = response.data;
-        this.profilePicture = data.profile_picture; // Ambil URL gambar profil
-        this.userName = data.username; // Ambil nama pengguna
+        this.user_id = data.user_id; 
+        this.profilePicture = data.profile_picture; 
+        this.userName = data.username; 
+        this.role = data.role; 
 
-        // console.log("Data profil pengguna:", data);
       } catch (error) {
-        // Jika terjadi error, tampilkan pesan error
         if (error.response) {
           console.error("Gagal mengambil data profil pengguna:", error.response);
         } else {

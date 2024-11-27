@@ -16,8 +16,8 @@
             <div class="ml-3 w-100">
               <div class="d-flex align-items-center">
                 <h4 class="mb-0 mt-0 d-inline me-3">{{ eodata.username }}</h4>
-                <button v-if="isFollowing" class="btn btn-sm btn-outline-primary d-inline" v-on:click="toggleFollow">Unfollow</button>
-                <button v-else class="btn btn-sm btn-primary d-inline" v-on:click="toggleFollow">Follow</button>
+                <button v-if="!isOwner" class="btn btn-sm btn-primary d-inline" v-on:click="toggleFollow">Follow</button>
+                <button v-else-if="isFollowing" class="btn btn-sm btn-outline-primary d-inline" v-on:click="toggleFollow">Unfollow</button>
               </div>
               <div class="d-flex rounded stats">
                 <div class="d-inline pe-2">
@@ -80,6 +80,8 @@ export default {
       profilePicture: "",
       userName: "",
       userId: "",
+      role: "",
+      isOwner: false
     };
   },
   watch: {
@@ -97,6 +99,9 @@ export default {
         console.error("Error fetching event-organizer details:", error);
       } finally {
         this.loading = false;
+        if(this.role == 'event organizer' && this.userId == this.eodata.id){
+          this.isOwner = true;
+        }
       }
     },
 
@@ -112,6 +117,7 @@ export default {
         this.profilePicture = data.profile_picture;
         this.userName = data.username;
         this.userId = data.user_id;
+        this.role = data.role;
       } catch (error) {
         if (error.response) {
           console.error("Gagal mengambil data profil pengguna:", error.response);
