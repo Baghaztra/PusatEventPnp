@@ -89,7 +89,7 @@ export default {
     async fetchEoData() {
       this.loading = true;
       try {
-        const response = await axios.get(`http://127.0.0.1:5000/event_organizers?id=${this.id}`);
+        const response = await axios.get(`${process.env.VUE_APP_BACKEND}/event_organizers?id=${this.id}`);
         this.eodata = response.data;
         
         this.isFollowing = this.eodata.subs.includes(this.userId); 
@@ -102,7 +102,7 @@ export default {
 
     async fetchUserProfile() {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/profile", {
+        const response = await axios.get(`${process.env.VUE_APP_BACKEND}/profile`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
@@ -125,7 +125,7 @@ export default {
       try {
         // const response = await axios.post(
         await axios.post(
-          `http://localhost:5000/subscribe/${this.eodata.id}`,
+          `${process.env.VUE_APP_BACKEND}/subscribe/${this.eodata.id}`,
           {}, // Body kosong
           {
             headers: {

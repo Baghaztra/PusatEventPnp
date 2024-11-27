@@ -51,7 +51,7 @@ export default {
       try {
         // const response = await axios.post(
         await axios.post(
-          `http://localhost:5000/like/${this.data.id}`,
+          `${process.env.VUE_APP_BACKEND}/like/${this.data.id}`,
           {}, // Body kosong
           {
             headers: {
@@ -104,7 +104,7 @@ export default {
         return;
       }
 
-      const response = await axios.get("http://localhost:5000/profile", {
+      const response = await axios.get(`${process.env.VUE_APP_BACKEND}/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

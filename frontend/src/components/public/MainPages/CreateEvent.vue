@@ -180,7 +180,7 @@ export default {
       event.append("image", this.selectedFile);
 
       try {
-        const response = await fetch("https://your-backend-url/api/events", {
+        const response = await fetch(`${process.env.VUE_APP_BACKEND}/api/events`, { //belum kealr
           method: "POST",
           body: event,
         });

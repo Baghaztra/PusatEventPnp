@@ -76,7 +76,7 @@ export default {
   methods: {
     async login() {
       try {
-        const response = await axios.post("http://localhost:5000/login", {
+        const response = await axios.post(`${process.env.VUE_APP_BACKEND}/login`, {
           email: this.email,
           password: this.password,
         });
@@ -104,7 +104,7 @@ export default {
       }
     },
     loginWithGoogle() {
-      window.location.href = "http://127.0.0.1:5000/google-login";
+      window.location.href = `${process.env.VUE_APP_BACKEND}/google-login`;
     },
     togglePassword() {
       this.passwordVisible = !this.passwordVisible;

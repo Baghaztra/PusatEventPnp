@@ -182,7 +182,7 @@ export default {
     async fetchEventDetails() {
       this.loading = true;
       try {
-        const response = await axios.get(`http://127.0.0.1:5000/event/${this.id}`);
+        const response = await axios.get(`${process.env.VUE_APP_BACKEND}/event/${this.id}`);
         this.event = response.data;
       } catch (error) {
         console.error("Error fetching event details:", error);
@@ -193,7 +193,7 @@ export default {
 
     async fetchUserProfile() {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/profile", {
+        const response = await axios.get(`${process.env.VUE_APP_BACKEND}/profile`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
@@ -238,7 +238,7 @@ export default {
           // Debug: log data yang akan dikirim
           console.log("Payload yang dikirim:", payload);
 
-          const response = await axios.post("http://127.0.0.1:5000/comment", payload, {
+          const response = await axios.post(`${process.env.VUE_APP_BACKEND}/comment`, payload, {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
@@ -292,7 +292,7 @@ export default {
       });
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete("http://127.0.0.1:5000/comment", {
+          const response = await axios.delete(`${process.env.VUE_APP_BACKEND}/comment`, {
             data: { comment_id: id },
           });
           console.log(response.data);

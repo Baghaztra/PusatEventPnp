@@ -53,7 +53,7 @@ export default {
       });
       if (result.isConfirmed) {
         try {
-          const response = await axios.post("http://127.0.0.1:5000/resend", {
+          const response = await axios.post(`${process.env.VUE_APP_BACKEND}/resend`, {
             id: this.$route.query.user_id,
             role: this.$route.query.role,
           });

@@ -125,7 +125,7 @@ export default {
         formData.append("pfp", this.pfp, this.pfp.name);
 
         try {
-          const response = await axios.post("http://localhost:5000/eo-register", formData, {
+          const response = await axios.post(`${process.env.VUE_APP_BACKEND}/eo-register`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
           // const token = response.data.token;

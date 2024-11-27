@@ -35,9 +35,11 @@ export default {
   methods: {
     async fetchEvents() {
       this.loading = true;
+      console.log("isi env",process.env.VUE_APP_BACKEND);
+      
       try {
         const response = await axios.get(
-          `http://127.0.0.1:5000/event-latest`
+          `${process.env.VUE_APP_BACKEND}/event-latest`
         );
         this.events = response.data;
       } catch (error) {
