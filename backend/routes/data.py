@@ -61,7 +61,7 @@ def event_details(id):
 
 @data_bp.route('/event', methods=['POST'])
 @jwt_required() 
-def create_enent():
+def create_event():
     identity = get_jwt_identity()
     
     if(identity.get('role') != "event organizer"):
@@ -98,6 +98,35 @@ def create_enent():
         new_event.poster = poster_url
         db.session.add(new_event)
         db.session.commit()
+        
+    # Pindahkan TemporaryImage ke Image
+    temporary_images = TemporaryImage.query.filter_by(eo_id=eo_id).all()
+
+    if temporary_images:
+        upload_folder = f'uploads/events/{new_event.id}/'
+        os.makedirs(upload_folder, exist_ok=True)
+
+        for temp_image in temporary_images:
+            # Pindahkan file fisik
+            old_path = temp_image.path
+            new_path = os.path.join(upload_folder, os.path.basename(temp_image.path))
+            if os.path.exists(old_path):
+                os.rename(old_path, new_path)
+
+            # Buat entri baru di tabel Image
+            new_image = Image(
+                event_id=new_event.id,
+                path=f"http://localhost:5000/{new_path}",  # URL baru untuk gambar
+                created_at=datetime.now()
+            )
+            db.session.add(new_image)
+            if os.path.exists(temp_image.path):
+                os.remove(temp_image.path)
+            # Hapus entri TemporaryImage
+            db.session.delete(temp_image)
+
+        db.session.commit()
+
     
     data = {
         "eo_id": new_event.eo_id,

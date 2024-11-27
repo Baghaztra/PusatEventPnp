@@ -37,32 +37,31 @@
       </div>
 
       <!-- Gallery -->
-      <h3>Gallery</h3>
+      <h3 v-if="event.images && event.images.length > 0">Gallery</h3>
       <div class="row">
         <div class="col">
           <div class="d-flex overflow-auto">
             <div
               v-for="(image, index) in event.images"
               :key="index"
-              class="p-2 image-container"
+              class="p-2"
               style="flex: 0 0 auto">
               <img :src="image" alt="gambar" class="img-fluid rounded" />
             </div>
           </div>
         </div>
       </div>
-
       <!-- Gallery -->
 
       <!-- Forum -->
-      <h3>Forum <i class="fa fa-thumbs-up"></i></h3>
+      <h3 class="mt-3">Forum</h3>
       <!-- Comentar -->
       <section>
         <div class="container mb-5 text-body">
           <div class="row d-flex justify-content-center">
             <div class="col-md-11">
               <!-- Add new -->
-              <div class="d-flex flex-start mb-4">
+              <div class="d-flex flex-start mb-4" v-if="userRole != 'event organizer'">
                 <div class="pt-4">
                   <img
                     v-if="profilePicture"
@@ -104,9 +103,12 @@
                 </div>
               </div>
               <!-- Add new -->
-
+              
               <!-- Another comment -->
-              <div class="d-flex flex-start mb-4" v-for="comment in event.comments" :key="comment">
+              <div v-if="event.comments && event.comments.length == 0">
+                <h6 class="text-secondary">No one comment yet..</h6>
+              </div>
+              <div class="d-flex flex-start mb-4" v-else v-for="comment in event.comments" :key="comment">
                 <div class="pt-4">
                   <img
                     v-if="comment.pfp"
@@ -173,6 +175,7 @@ export default {
       profilePicture: "",
       userName: "",
       userId: "",
+      userRole: "",
     };
   },
   watch: {
@@ -203,6 +206,7 @@ export default {
         this.profilePicture = data.profile_picture;
         this.userName = data.username;
         this.userId = data.user_id;
+        this.userRole = data.role;
       } catch (error) {
         if (error.response) {
           console.error("Gagal mengambil data profil pengguna:", error.response);
@@ -360,9 +364,5 @@ export default {
 }
 .link-muted:hover {
   color: #1266f1;
-}
-.image-container {
-  height: 400px;
-  width: auto;
 }
 </style>

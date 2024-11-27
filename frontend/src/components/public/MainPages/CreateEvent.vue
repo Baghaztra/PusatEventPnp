@@ -163,7 +163,9 @@
               <button class="btn btn-primary" v-on:click="submitForm">Submit</button>
             </div>
           </fieldset>
-          <fieldset v-show="step === 4">Form Success</fieldset>
+          <fieldset v-show="step === 4">
+            <router-link :to="'/home'">Lihat event</router-link>
+          </fieldset>
         </div>
       </div>
     </div>
@@ -185,6 +187,7 @@ import FilePondPluginImagePreview from "filepond-plugin-image-preview/dist/filep
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
 import { setOptions } from "filepond";
+import Swal from "sweetalert2";
 
 const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
@@ -205,7 +208,7 @@ export default {
       },
       editor: null,
       posterFile: null,
-      myFiles: null
+      myFiles: null,
     };
   },
   methods: {
@@ -230,8 +233,19 @@ export default {
       this.step--;
     },
     async submitForm() {
-      if (!this.posterFile) {
-        alert("Please upload an image!");
+      if (!this.formData.title || !this.posterFile || !this.formData.start_date || !this.editor?.getHTML()?.trim()) {
+        Swal.fire({
+          title: "Error!",
+          text: "Lengkapi seluruh data!",
+          icon: "error",
+          customClass: {
+            popup: "alert alert-danger",
+            title: "h4",
+            content: "small",
+            confirmButton: "btn btn-danger",
+          },
+          buttonsStyling: false,
+        });
         return;
       }
 
@@ -286,15 +300,15 @@ export default {
           },
           onload: (response) => {
             const { image_id } = JSON.parse(response);
-            return image_id; 
-          }
+            return image_id;
+          },
         },
         revert: {
           url: `${process.env.VUE_APP_BACKEND}/file/delete`,
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       },
       allowMultiple: true,
     });
