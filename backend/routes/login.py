@@ -114,6 +114,8 @@ def login_eo():
             access_token = create_access_token(
                 identity={'user_id': eo.id, 'username': eo.username, 'role':"event organizer"})
             return jsonify({"message": "Login success", "token": access_token}), 200
+        elif eo.status == "Waiting Admin":
+            return jsonify({"message": "We still waiting admin to accept this account."}), 401
         else:
             return jsonify({"message": "The account is not active."}), 401
     else:
@@ -191,20 +193,45 @@ def verify_email(token):
             if user:
                 user.status = "Active"
                 db.session.commit()
-                return jsonify({"message": "Account verified successfully."}), 200
+                context = {
+                    "status":200,
+                    "goto":"http://127.0.0.1:8080/login",
+                    "message":"Account verified successfully."
+                }
+                return render_template("redirect.html", **context)
             else:
-                return jsonify({"message": "Invalid or expired token."}), 400
+                context = {
+                    "status":498,
+                    "goto":"",
+                    "message":"Invalid or expired token."
+                }
+                return render_template("redirect.html", **context)
         elif(role == 'event organizer'):
             user = EventOrganizer.query.get(user_id)
             if user:
                 user.status = "Waiting Admin"
                 db.session.commit()
-                return jsonify({"message": "Email verified successfully. Wait for confirmation by admin."}), 200
+                context = {
+                    "status":200,
+                    "goto":"http://127.0.0.1:8080/eo-login",
+                    "message":"Email verified successfully. Wait for confirmation by admin."
+                }
+                return render_template("redirect.html", **context)
             else:
-                return jsonify({"message": "Invalid or expired token."}), 400
+                context = {
+                    "status":489,
+                    "goto":"",
+                    "message":"Invalid or expired token."
+                }
+                return render_template("redirect.html", **context)
     except Exception as e:
         print(e)
-        return jsonify({"message": "Verification failed."}), 400
+        context = {
+            "status":404,
+            "goto":"",
+            "message": e
+        }
+        return render_template("redirect.html", **context)
 
 
 
@@ -238,7 +265,7 @@ def get_profile():
 @login_bp.route('/resend', methods=['POST'])
 def resend():
     data = request.get_json()
-    user_id = data['id']
+    user_id = data['user_id']
     role = data['role']
     
     if(role == 'user'):

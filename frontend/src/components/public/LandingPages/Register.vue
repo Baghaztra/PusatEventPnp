@@ -1,7 +1,7 @@
 <template>
   <LpLayout>
     <div class="d-flex flex-column align-items-center main-box py-3 px-5">
-      <router-link to="/" class="position-absolute top-0 end-0 text-secondary mr-2 mt-1">
+      <router-link to="/" class="position-absolute top-0 end-0 text-secondary me-2 mt-1">
         <i class="fas fa-caret-left"></i>
       </router-link>
 
@@ -40,13 +40,11 @@
                 v-model="password"
                 placeholder="Password"
                 required />
-              <div class="input-group-append">
                 <span class="input-group-text" @click="togglePassword">
                   <i
                     :class="passwordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"
                     id="iconShowPass"></i>
                 </span>
-              </div>
             </div>
           </div>
           <div class="mb-3">
@@ -59,19 +57,17 @@
                 v-model="passwordConfirm"
                 placeholder="Confirm Password"
                 required />
-              <div class="input-group-append">
                 <span class="input-group-text" @click="toggleConfirmPassword">
                   <i
                     :class="confirmPasswordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"
                     id="iconShowPass"></i>
                 </span>
-              </div>
             </div>
           </div>
           <button
             type="submit"
-            class="btn mb-3"
-            style="background-color: #22b3c1; color: aliceblue; width: 100%">
+            class="btn btn-primary mb-3"
+            style="width: 100%">
             Register
           </button>
         </form>

@@ -73,7 +73,6 @@ def eo_register():
     msg_body = f"Halo {name},\n\nKlik link berikut untuk memverifikasi akun Anda:"
     data = {
         'app_name': "Pusat Event Politeknik",
-        'title': msg_title,
         'body': msg_body,
         'link': verification_link
     }
@@ -81,7 +80,11 @@ def eo_register():
 
     try:
         mail.send(msg)
-        return jsonify({"message": "Registration successful. Please check your email to verify your account."}), 201
+        return jsonify({
+            "message": "Registration successful. Please check your email to verify your account.",
+            "user_id": eo.id,
+            "role": "event organizer"
+        }), 201
     except Exception as e:
         print(e)
         return jsonify({"message": "Failed to send verification email."}), 500

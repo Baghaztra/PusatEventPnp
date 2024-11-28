@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Confirmed</title>
+    <!-- Boostwatch United CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/united/bootstrap.min.css">
+</head>
+<body>
+    <div class="container d-flex flex-column justify-content-center align-items-center text-center" style="height: 100vh;">
+        <p class="lead">{{ message }}</p>
+        {% if goto != "" %}
+        <div class="mt-4">
+            <a href="{{ goto }}" class="btn btn-primary btn-lg">
+                Go to Login Page
+            </a>
+        </div>
+        {% endif %}
+        <hr class="my-4">
+        <footer class="text-muted mt-5">
+            <p>&copy; 2024 Pusat Event Politeknik. All rights reserved.</p>
+            <p><a href="http://127.0.0.1:8080/">Return to Homepage</a></p>
+        </footer>
+    </div>
+</body>
+</html>

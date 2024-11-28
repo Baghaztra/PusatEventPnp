@@ -54,7 +54,7 @@ export default {
       if (result.isConfirmed) {
         try {
           const response = await axios.post(`${process.env.VUE_APP_BACKEND}/resend`, {
-            id: this.$route.query.user_id,
+            user_id: this.$route.query.user_id,
             role: this.$route.query.role,
           });
           console.log(response.data);
@@ -69,9 +69,6 @@ export default {
               confirmButton: "btn btn-sm btn-success",
             },
             buttonsStyling: false,
-          }).then(() => {
-            // Navigasi ke "/"
-            this.$router.push("/");
           });
 
         } catch (error) {
