@@ -40,11 +40,9 @@
                     v-model="password"
                     placeholder="Password"
                     required />
-                  <div class="input-group-append">
                     <span class="input-group-text" @click="togglePassword">
                       <i :class="passwordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                     </span>
-                  </div>
                 </div>
               </div>
               <div class="mb-3">
@@ -57,11 +55,9 @@
                     v-model="passwordConfirm"
                     placeholder="Confirm Password"
                     required />
-                  <div class="input-group-append">
                     <span class="input-group-text" @click="toggleConfirmPassword">
                       <i :class="confirmPasswordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                     </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -78,8 +74,8 @@
           </div>
           <button
             type="submit"
-            class="btn mb-3"
-            style="background-color: #22b3c1; color: aliceblue; width: 100%">
+            class="btn btn-primary mb-3"
+            style="width: 100%">
             Request
           </button>
         </form>

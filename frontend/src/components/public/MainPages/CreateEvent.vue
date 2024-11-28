@@ -164,6 +164,7 @@
             </div>
           </fieldset>
           <fieldset v-show="step === 4">
+            <button v-on:click="linkPendaftaran">Tambahkan link pendaftaran</button>
             <router-link :to="'/home'">Lihat event</router-link>
           </fieldset>
         </div>
@@ -274,6 +275,45 @@ export default {
         alert("Error submitting form.");
       }
     },
+
+    async linkPendaftaran() {
+      Swal.fire({
+        title: "Submit your Github username",
+        input: "text",
+        inputAttributes: {
+          autocapitalize: "off"
+        },
+        showCancelButton: true,
+        confirmButtonText: "Look up",
+        showLoaderOnConfirm: true,
+        preConfirm: async (login) => {
+          try {
+            const githubUrl = `
+              https://api.github.com/users/${login}
+            `;
+            const response = await fetch(githubUrl);
+            if (!response.ok) {
+              return Swal.showValidationMessage(`
+                ${JSON.stringify(await response.json())}
+              `);
+            }
+            return response.json();
+          } catch (error) {
+            Swal.showValidationMessage(`
+              Request failed: ${error}
+            `);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: `${result.value.login}'s avatar`,
+            imageUrl: result.value.avatar_url
+          });
+        }
+      });
+    }
   },
   mounted() {
     this.editor = new Editor({

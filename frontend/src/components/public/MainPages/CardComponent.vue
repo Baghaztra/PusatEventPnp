@@ -26,12 +26,13 @@
             target="_blank"
             >Register</a
           >
-          <a
+          <button
             class="btn btn-warning me-1"
             v-else-if="userRole == 'event organizer' && userId == data.eo_id"
-            :href="data.registration_url"
-            >Add a registration</a
+            v-on:click="linkPendaftaran"
           >
+            Add a registration
+          </button>
           <router-link class="btn btn-primary me-1" :to="`/event/${data.id}`">More</router-link>
           <button class="btn" :class="{ 'text-primary': isLiked }" @click="toggleLike">
             <span class="me-1">{{ data.likes?.length ?? 0 }}</span>
@@ -176,6 +177,55 @@ export default {
       }
       return text;
     },
+    async linkPendaftaran() {
+      Swal.fire({
+        title: "Paste your registration form here",
+        input: "text",
+        inputPlaceholder: "https://forms.gle/XXXXX",
+        inputAttributes: {
+          autocapitalize: "off",
+          class: "form-control"
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-save"></i> Save',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        footer: '<a id="open-google-forms" class="text-primary" href="https://forms.google.com" target="_blank"><i class="fas fa-external-link-alt"></i> Create Google Form</a>',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary"
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (link) => {
+          if (!link) {
+            Swal.showValidationMessage("Url can't be empty");
+            return;
+          }
+
+          try {
+            const response = await axios.patch(`${process.env.VUE_APP_BACKEND}/update-event`, {
+              form_url: link,
+            });
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
+            }
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error.response?.data?.message || error.message}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+        }
+      });
+    }
   },
   async created() {
     try {

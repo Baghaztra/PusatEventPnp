@@ -1,28 +1,22 @@
 <template>
   <div class="home">
-    <PublicStyle />
     <NavbarComponent class="sticky-top"/>
     <main>
       <slot></slot>
     </main>
     <FooterComponent />
-    <PublicScripts />
   </div>
 </template>
 
 <script>
 import FooterComponent from "@/components/public/FooterComponent.vue";
 import NavbarComponent from "@/components/public/NavbarComponent.vue";
-import PublicScripts from "@/components/public/PublicScripts.vue";
-import PublicStyle from "@/components/public/PublicStyle.vue";
 
 export default {
   name: "HomeLayout",
   components: {
     NavbarComponent,
     FooterComponent,
-    PublicStyle,
-    PublicScripts,
   },
   watch: {
     $route: "checkToken",

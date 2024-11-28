@@ -1,7 +1,7 @@
 <template>
     <LpLayout>
-      <div class="d-flex flex-column align-items-center main-box">
-        <router-link to="/" class="position-absolute top-0 end-0 text-secondary mr-2 mt-1">
+      <div class="d-flex flex-column align-items-center main-box p-3">
+        <router-link to="/" class="position-absolute top-0 end-0 text-secondary me-2 mt-1">
           <i class="fas fa-caret-left"></i>
         </router-link>
   
@@ -30,20 +30,18 @@
                   v-model="password"
                   placeholder="Password"
                   required />
-                <div class="input-group-append">
                   <span class="input-group-text" @click="togglePassword">
                     <i
                       :class="passwordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"
                       id="iconShowPass"></i>
                   </span>
-                </div>
               </div>
             </div>
   
             <button
               type="submit"
-              class="btn mb-3"
-              style="background-color: #22b3c1; color: aliceblue; width: 100%">
+              class="btn btn-primary mb-3"
+              style="width: 100%">
               Login
             </button>
           </form>
@@ -56,7 +54,7 @@
   <script>
   import LpLayout from "@/views/LpLayout.vue";
   import axios from "axios";
-import Swal from "sweetalert2";
+  import Swal from "sweetalert2";
   
   export default {
     name: "EoLoginPage",
@@ -122,13 +120,7 @@ import Swal from "sweetalert2";
     },
   };
   </script>
-  
-  <style scoped>
-  .main-box {
-    max-height: 100%;
-  }
-  </style>
-  
+
   <style scoped>
   .main-box {
     max-height: 100%;

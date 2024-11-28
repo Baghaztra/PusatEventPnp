@@ -1,5 +1,4 @@
 <template>
-  <PublicStyle />
   <div class="home" style=" height: 100vh;">
     <header class="masthead">
       <div class="blur">
@@ -10,20 +9,13 @@
         </div>
       </div>
     </header>
-    <PublicScripts />
   </div>
 </template>
 
 <script>
-import PublicScripts from "@/components/public/PublicScripts.vue";
-import PublicStyle from "@/components/public/PublicStyle.vue";
 
 export default {
   name: "LpLayout",
-  components: {
-    PublicStyle,
-    PublicScripts,
-  },
   methods: {},
   mounted() {
     document.title = "Pusat Event Politeknik";
