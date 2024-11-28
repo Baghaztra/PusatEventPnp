@@ -1,22 +1,33 @@
 <template>
-  <div>
-    <header class="header-admin d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom fixed-top bg-primary">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-        <span class="fs-4 ms-3 text-white">Admin Pusat Event PNP</span>
-      </a>
-    </header>
-  </div>
-  <div style="margin-top: 70px;"></div> <!-- Spacer untuk menghindari konten tertutup header -->
+  <header class="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow">
+    <button
+      class="navbar-toggler d-md-none collapsed"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#sidebarMenu"
+      aria-controls="sidebarMenu"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <router-link class="navbar-brand fs-3 col-md-3 col-lg-2 me-0 px-3 fs-6" to="/home">
+      Pusat Event Politeknik
+    </router-link>
+    <div class="navbar-nav">
+      <div class="nav-item text-nowrap">
+        <button class="nav-link px-3" v-on:click="logout">Sign out</button>
+      </div>
+    </div>
+  </header>
 </template>
 
-<style scoped>
-.header-admin {
-  margin-left: 280px;
-}
-
-@media (max-width: 768px) {
-  .header-admin {
-    margin-left: 0;
+<script>
+export default {
+  methods: {
+    logout() {
+      localStorage.removeItem("token");
+      this.$router.push("/login");
+    },
   }
 }
-</style>
+</script>

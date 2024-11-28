@@ -1,56 +1,15 @@
 <template>
-  <div>
-    <!-- Tombol Toggle Sidebar (hanya muncul di layar kecil) -->
-    <button
-      class="btn btn-primary d-md-none mb-3"
-      @click="toggleSidebar"
-      style="position: fixed; top: 10px; left: 10px; z-index: 1050">
-      <i class="fas fa-bars"></i>
-    </button>
-
-    <!-- Sidebar -->
-    <div
-      class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary sidebar-fixed"
-      :class="{ 'sidebar-hidden': !isSidebarVisible && isMobile }">
-      <a
-        href="/admin"
-        class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-        <!-- <i class="fas fa-bars me-2"></i> -->
-        <span class="fs-4">Hi!</span>
-      </a>
-      <hr />
-      <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item" v-for="item in navItems" :key="item.text">
-          <router-link
-            :to="item.link"
-            class="nav-link"
-            :class="{ 'text-white': isActive(item.link), 'text-primary': !isActive(item.link), active: isActive(item.link) }">
-            <i :class="item.icon + ' me-2'"></i>
-            {{ item.text }}
+  <nav id="sidebarMenu" style="height: 82vh; z-index: 1;" class="position-fixed bg-white col-md-3 col-lg-2 d-md-block sidebar collapse">
+    <div class="position-sticky pt-3 sidebar-sticky">
+      <ul class="nav flex-column">
+        <li class="nav-item mb-3" v-for="item in navItems" :key="item">
+          <router-link class="nav-link" :class="{ 'bg-primary rounded text-light': $route.path == item.link }" :to="item.link">
+            <i :class="item.icon"></i> {{ item.text }}
           </router-link>
         </li>
       </ul>
-      <hr />
-      <div class="dropdown">
-        <a
-          href="#"
-          class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
-          data-bs-toggle="dropdown"
-          aria-expanded="false">
-          <img
-            src="https://github.com/mdo.png"
-            alt=""
-            width="32"
-            height="32"
-            class="rounded-circle me-2" />
-          <strong>mdo</strong>
-        </a>
-        <ul class="dropdown-menu text-small shadow">
-          <li><a class="dropdown-item" href="#">Sign out</a></li>
-        </ul>
-      </div>
     </div>
-  </div>
+  </nav>
 </template>
 
 <script>

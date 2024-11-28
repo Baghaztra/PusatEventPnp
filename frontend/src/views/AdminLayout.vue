@@ -1,14 +1,14 @@
 <template>
-  <div class="row">
-    <div class="col" style="max-width: 280px">
+  <HeaderComponent />
+  <div class="container-fluid">
+    <div class="row">
       <NavbarComponent />
-    </div>
-    <div class="col">
-      <HeaderComponent />
-      <main>
-        <slot></slot>
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div style="overflow-x: scroll;">
+          <slot></slot>
+        </div>
       </main>
-      <FooterComponent />
+      <FooterComponent class="col-md-9 ms-sm-auto col-lg-10 px-md-4" />
     </div>
   </div>
 </template>

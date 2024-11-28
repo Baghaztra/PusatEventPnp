@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-      <p class="col-md-4 mb-0 text-body-secondary">&copy; 2024 Baghaztra</p>
-
-      <ul class="nav col-md-4 justify-content-end">
-        <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Home</a></li>
-      </ul>
-    </footer>
-  </div>
+  <footer class="py-3 bg-light border-top">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <p class="mb-0 text-muted">
+        &copy; {{ new Date().getFullYear() }} Pusat Event Politeknik. All rights reserved.
+      </p>
+    </div>
+  </footer>
 </template>

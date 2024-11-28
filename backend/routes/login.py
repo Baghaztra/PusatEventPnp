@@ -77,7 +77,7 @@ def callback():
         db.session.commit()
 
     access_token = create_access_token(
-        identity={'user_id': user.id, 'username': user.username})
+        identity={'user_id': user.id, 'username': user.username, 'role': user.role})
     # return jsonify({"message": "Login berhasil", "token": access_token}), 200
     return redirect(f"http://localhost:8080/home?token={access_token}")
 
@@ -94,7 +94,7 @@ def login():
     if user and user.verify_password(password):
         if user.status == "Active":
             access_token = create_access_token(
-                identity={'user_id': user.id, 'username': user.username})
+                identity={'user_id': user.id, 'username': user.username, "role":user.role})
             return jsonify({"message": "Login success", "token": access_token, "role":user.role}), 200
         else:
             return jsonify({"message": "The account is not active."}), 401

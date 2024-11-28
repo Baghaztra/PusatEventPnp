@@ -1,65 +1,71 @@
 <template>
   <AdminLayout>
     <div class="container-fl">
-      <!-- Tampilkan pesan jika data tidak tersedia -->
-      <p v-if="itemsSearching.length === 0">Data tidak tersedia atau sedang dimuat...</p>
-
-      <!-- Tampilkan tabel jika ada data -->
-      <table v-else class="table table-striped">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Event Organizer</th>
-            <th>Event Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody class="table-group-divider">
-          <tr v-for="(item, index) in itemsSearching" :key="index">
-            <td>{{ item.title }}</td>
-            <td>{{ item.eo }}</td>
-            <td>{{ item.event_date }}</td>
-            <td><a href="" class="btn btn-danger btn-sm">Take down</a></td>
-          </tr>
-        </tbody>
-      </table>
+      <p v-if="items.length === 0">Data tidak tersedia atau sedang dimuat...</p>
+      <div v-else class="card p-3">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Event Organizer</th>
+              <th>Event Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr v-for="(item, index) in items" :key="index">
+              <td>{{ item.title }}</td>
+              <td>{{ item.eo }}</td>
+              <td>
+                {{
+                  new Intl.DateTimeFormat("en-EN", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  }).format(new Date(item.event_date))
+                }}
+              </td>
+              <td>
+                <router-link :to="'/event/'+item.id" class="btn btn-info btn-sm d-inline me-2"><i class="fas fa-external-link-alt"></i> See</router-link>
+                <a class="btn btn-danger btn-sm d-inline me-2"><i class="fas fa-ban"></i> Take down</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </AdminLayout>
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
 import AdminLayout from "@/views/AdminLayout.vue";
+import axios from "axios";
 
 export default {
   name: "AdminEvents",
   components: {
     AdminLayout,
   },
-  setup() {
-    const itemsSearching = ref([]); // Inisialisasi sebagai array kosong
-
-    // Fungsi fetch data
-    const fetchData = async () => {
+  data() {
+    return {
+      items: [],
+    };
+  },
+  methods: {
+    async fetchData() {
       try {
-        const response = await fetch(`http://localhost:5000/event-latest?per_page=10000`);
-        const data = await response.json();
-        
-        itemsSearching.value = Array.isArray(data.events) ? data.events : [];
-        console.log("Data fetched:", itemsSearching.value); // Lakukan logging di sini
+        const response = await axios.get(`${process.env.VUE_APP_BACKEND}/event-latest`);
+        this.items = Array.isArray(response.data) ? response.data : [];
+        // console.log("Data fetched:", this.items);
       } catch (error) {
         console.error("Error fetching data:", error);
-        itemsSearching.value = []; // Set ke array kosong jika error terjadi
+        this.items = [];
       }
-    };
-
-    onMounted(() => {
-      fetchData(); // Ambil data saat komponen dipasang
-    });
-
-    return {
-      itemsSearching,
-    };
+    },
+  },
+  mounted() {
+    this.fetchData();
   },
 };
 </script>
@@ -69,14 +75,4 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
-/* 
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-th {
-  background-color: #f2f2f2;
-  text-align: left;
-} */
 </style>

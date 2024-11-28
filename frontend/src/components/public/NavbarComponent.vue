@@ -50,6 +50,9 @@
             <li class="nav-item" v-if="role == 'event organizer'">
               <router-link class="nav-link" :to="'/organizer/'+user_id">Profile</router-link>
             </li>
+            <li class="nav-item" v-if="role == 'admin'">
+              <router-link class="nav-link" to="/admin">Dashboard</router-link>
+            </li>
             <li class="nav-item" v-if="role == 'event organizer'">
               <router-link class="nav-link" to="/create-event">Create Event</router-link>
             </li>
@@ -110,6 +113,9 @@ export default {
         this.userName = data.username; 
         this.role = data.role; 
 
+        console.log(this.role);
+        
+
       } catch (error) {
         if (error.response) {
           console.error("Gagal mengambil data profil pengguna:", error.response);
@@ -122,7 +128,7 @@ export default {
       localStorage.removeItem("token");
       this.isLoggedIn = false;
       this.profilePicture = "";
-      this.userName = ""; // Reset nama pengguna saat logout
+      this.userName = "";
       this.$router.push("/login");
     },
   },
