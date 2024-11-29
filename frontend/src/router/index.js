@@ -15,6 +15,7 @@ import HomeLayout from '@/views/HomeLayout.vue'
 import EventDetails from '@/components/public/MainPages/EventDetails.vue'
 import EventOrganizer from '@/components/public/MainPages/EventOrganizer.vue'
 import CreateEvent from '@/components/public/MainPages/CreateEvent.vue'
+import NotFound from '@/views/NotFound.vue'
 
 const routes = [
   // Main
@@ -44,6 +45,16 @@ const routes = [
     name: 'EoPage',
     component: EventOrganizer,
     props: true,
+  },
+  {
+    path: '/404_',
+    name: '404_page',
+    component: NotFound,
+    props: true,
+  },
+  {
+    path: '/:catchAll(.*)',
+    redirect: '/404_',
   },
 
   // User 

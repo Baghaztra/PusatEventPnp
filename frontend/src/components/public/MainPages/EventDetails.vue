@@ -161,6 +161,7 @@
 </template>
 
 <script>
+import router from "@/router";
 import HomeLayout from "@/views/HomeLayout.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -195,6 +196,9 @@ export default {
       try {
         const response = await axios.get(`${process.env.VUE_APP_BACKEND}/event/${this.id}`);
         this.event = response.data;
+        if (this.event.eo_status != "Active"){
+          router.push('/404_');
+        }
       } catch (error) {
         console.error("Error fetching event details:", error);
       } finally {

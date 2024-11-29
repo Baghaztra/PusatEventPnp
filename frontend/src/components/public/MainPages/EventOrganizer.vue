@@ -62,6 +62,7 @@ import HomeLayout from "@/views/HomeLayout.vue";
 import CardComponent from "./CardComponent.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+import router from "@/router";
 
 export default {
   name: "EventDetails",
@@ -105,6 +106,9 @@ export default {
       }
       if(this.role == 'event organizer' && this.userId == this.eodata.id){
         this.isOwner = true;
+      }
+      if (this.eodata.status != "Active"){
+        router.push('/404_');
       }
     },
 

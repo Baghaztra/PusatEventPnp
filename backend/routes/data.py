@@ -17,13 +17,14 @@ def event_latest():
             "title": event.title,
             "eo": event.event_organizer.username,
             "eo_id": event.event_organizer.id,
+            "eo_status": event.event_organizer.status,
             "likes": [like.user_id for like in event.likes],
             "poster": event.poster,
             "registration_url": event.registration_url,
             "event_date": event.start_date,
             "event_date_end": event.end_date
         }
-        for event in events
+        for event in events if event.event_organizer.status == 'Active'
     ]
 
     return jsonify(events_list), 200
@@ -37,6 +38,7 @@ def event_details(id):
             "title": event.title,
             "eo": event.event_organizer.username,
             "eo_id": event.event_organizer.id,
+            "eo_status": event.event_organizer.status,
             "images": [image.path for image in event.images],
             "likes": [like.user_id for like in event.likes],
             "comments": [
