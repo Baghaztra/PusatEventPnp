@@ -167,7 +167,7 @@ def event_delete():
         if (not event):
             return jsonify({'message': "Event not found"}), 404
         
-        if(user_id == event.eo_id and role == 'event organizer'):
+        if(role=='admin' or (user_id == event.eo_id and role == 'event organizer')):
             likes = Like.query.filter_by(event_id=event_id)
             comments = Comment.query.filter_by(event_id=event_id)
             images = Image.query.filter_by(event_id=event_id)

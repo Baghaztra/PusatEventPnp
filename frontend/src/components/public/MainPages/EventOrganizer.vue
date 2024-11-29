@@ -97,6 +97,9 @@ export default {
       try {
         const response = await axios.get(`${process.env.VUE_APP_BACKEND}/event_organizers?id=${this.id}`);
         this.eodata = response.data;
+        if (!this.eodata || this.eodata.status != "Active"){
+          router.push('/404_');
+        }
         
         this.isFollowing = this.eodata.subs.includes(this.userId); 
       } catch (error) {
@@ -106,9 +109,6 @@ export default {
       }
       if(this.role == 'event organizer' && this.userId == this.eodata.id){
         this.isOwner = true;
-      }
-      if (this.eodata.status != "Active"){
-        router.push('/404_');
       }
     },
 

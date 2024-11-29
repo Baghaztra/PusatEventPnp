@@ -35,6 +35,10 @@
       <div class="container my-3">
         <div class="row">
           <div class="col-md-8">
+            <router-link :to="'organizer/'+event.eo_id" class="text-primary">
+              {{ event.eo }}
+            </router-link>
+            presents:
             <h3 class="text-primary">{{ event.title }}</h3>
             <div v-html="event.description"></div>
           </div>

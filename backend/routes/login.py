@@ -121,12 +121,10 @@ def login_eo():
     else:
         return jsonify({"message": "Invalid email or password."}), 401
 
-
 @login_bp.route('/logout')
 def logout():
     session.clear()
     return jsonify({"message": "Logout berhasil"}), 200
-
 
 @login_bp.route('/register', methods=['POST'])
 def register():
@@ -233,17 +231,13 @@ def verify_email(token):
         }
         return render_template("redirect.html", **context)
 
-
-
 @login_bp.route('/profile', methods=['GET'])
-@jwt_required()  # endpoint ini membutuhkan token untuk mengakses
+@jwt_required() 
 def get_profile():
-     # Ambil user_id dari token JWT
     identity = get_jwt_identity()
     user_id = identity.get('user_id')
     role = identity.get('role')
 
-    # Periksa apakah user_id ada
     if not user_id:
         return jsonify({"message": "User ID not found in token."}), 400
     if role == 'event organizer':
@@ -251,7 +245,6 @@ def get_profile():
     else:
         user = User.query.get(user_id)
 
-        # Jika user ditemukan, kembalikan data profilnya
     if user:
         return jsonify({
             "user_id": user.id,
