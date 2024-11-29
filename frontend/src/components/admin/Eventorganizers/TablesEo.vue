@@ -25,7 +25,20 @@
               </td>
               <td>
                 <router-link :to="'/organizer/'+item.id" class="btn btn-sm btn-info d-inline me-2"><i class="fas fa-external-link-alt"></i> See</router-link>
-                <a href="#" class="btn btn-sm btn-danger d-inline me-2"><i class="fas fa-ban"></i> Ban</a>
+                <button 
+                  v-on:click="ban(item)" 
+                  :class="{
+                    'btn btn-sm d-inline me-2': true,
+                    'btn-danger' : item.status == 'Active',
+                    'btn-success' : item.status != 'Active'
+                }">
+                  <i :class="{
+                    'fas': true,
+                    'fa-ban' : item.status == 'Active',
+                    'fa-circle-check' : item.status != 'Active'
+                  }"></i> 
+                  {{ item.status == 'Active'? 'Ban':'Activate' }}
+                </button>
               </td>
             </tr>
           </tbody>
@@ -38,6 +51,7 @@
 <script>
 import axios from "axios";
 import AdminLayout from "@/views/AdminLayout.vue";
+import Swal from "sweetalert2";
 
 export default {
   name: "AdminEventorganizers",
@@ -60,6 +74,70 @@ export default {
         this.items = [];
       }
     },
+    async ban(user) {
+      let title = `Activate ${user.username}`;
+      let msg = `${user.username} will be activated.`;
+      let action = 'activated';
+      
+      if (user.status == 'Active') {
+        title = `Ban ${user.username}`;
+        msg = `${user.username} can't login anymore`;
+        action = 'banned';
+      }
+
+      const result = await Swal.fire({
+        title: title,
+        text: msg,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-triangle-exclamation"></i> Yes',
+        cancelButtonText: '<i class="fas fa-xmark"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-success"
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+          try {
+            var response;
+            if (user.status == "Waiting Admin") {
+              response = await axios.patch(`${process.env.VUE_APP_BACKEND}/eo-approve`, {
+                id: user.id,
+              });
+            }else{
+              response = await axios.patch(`${process.env.VUE_APP_BACKEND}/ban`, {
+                user_id: user.id,
+                role: 'event organizer'
+              });
+            }
+            return response.data; 
+          } catch (error) {
+            if (error.response) {
+              Swal.showValidationMessage(`Error: ${error.response.data.message}`);
+            } else {
+              Swal.showValidationMessage(`Request failed: ${error.message}`);
+            }
+            throw error;
+          }
+        }
+      });
+
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Success!",
+          text: `${user.username} has been successfully ${action}.`,
+          icon: "success",
+          customClass: {
+            title: "h4",
+            content: "small",
+            confirmButton: "btn btn-success",
+          },
+          buttonsStyling: false,
+        });
+        this.fetchData();
+      }
+    }
   },
   mounted() {
     this.fetchData();
