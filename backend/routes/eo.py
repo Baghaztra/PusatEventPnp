@@ -191,3 +191,116 @@ def event_delete():
     except Exception as e:
         print("error deleting event",e)
         return jsonify({'message': str(e)}), 500
+
+@eo_bp.route('/update/poster', methods=['PATCH'])
+@jwt_required()
+def poster_update():
+    try:
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+        role = identity.get('role')
+        
+        if 'poster' in request.files:
+            event_id = request.form.get('id')
+            event = Event.query.get(event_id)
+            if not event:
+                return jsonify({'message': 'Event not found'}), 404
+            
+            if event.poster and os.path.exists(event.poster.replace('http://localhost:5000/', '')):
+                os.remove(event.poster.replace('http://localhost:5000/', ''))
+            
+            file = request.files['poster']
+            filename = secure_filename(file.filename)
+
+            upload_path = os.path.join(f'uploads\\events\\{event_id}', filename)
+            file.save(upload_path)
+
+            poster_url = f'http://localhost:5000/uploads/events/{event_id}/{filename}'
+            event.poster = poster_url
+            db.session.commit()
+
+            return jsonify({'message': 'Poster updated successfully'}), 200
+
+        else:
+            return jsonify({'message': 'No file provided'}), 400
+        ...
+    except Exception as e:
+        print("error deleting event",e)
+        return jsonify({'message': str(e)}), 500
+
+@eo_bp.route('/update/event', methods=['PATCH'])
+@jwt_required()
+def event_update():
+    try:
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+        role = identity.get('role')
+        
+        event_id = request.json.get('id')
+        key = request.json.get('key')
+        value = request.json.get('value')
+        
+        event = Event.query.get(event_id)
+        if (not event):
+            return jsonify({'message': "Event not found"}), 404
+        
+        if(user_id == event.eo_id and role == 'event organizer'):
+            if hasattr(event, key): 
+                setattr(event, key, value) 
+                db.session.commit() 
+                return jsonify({'message': "Event has been updated."}), 200
+            else:
+                return jsonify({'message': f"Invalid field: {key}"}), 400
+        else:    
+            return jsonify({'message': "Only creator can update this"}), 401
+    except Exception as e:
+        print("error deleting event",e)
+        return jsonify({'message': str(e)}), 500
+    
+@eo_bp.route('/file/upload/<id>', methods=['POST'])
+def event_file_upload(id):
+    try:
+        if 'image' not in request.files:
+            return jsonify({'error': 'No file part in request'}), 400
+
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(f"uploads\\events\\{id}", filename)
+        file.save(filepath)
+
+        new_image = Image(
+            event_id=id,
+            path = f'http://localhost:5000/uploads/events/{id}/{filename}',
+            created_at=datetime.now()
+        )
+        db.session.add(new_image)
+        db.session.commit()
+
+        return jsonify({'message': 'File uploaded successfully', 'image_id': new_image.id}), 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': str(e)}), 500
+    
+@eo_bp.route('/file/delete/<id>', methods=['DELETE'])
+def event_file_delete(id):
+    try:
+        print(f"try to deleting {id}")
+        if not id:
+            return jsonify({'error': 'Image ID is required'}), 400
+
+        image = Image.query.filter_by(id=id).first()
+        if not image:
+            return jsonify({'error': 'File not found'}), 404
+
+        if os.path.exists(image.path.replace('http://localhost:5000/', '')):
+            os.remove(image.path.replace('http://localhost:5000/', ''))
+
+        db.session.delete(image)
+        db.session.commit()
+
+        return jsonify({'message': 'File deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

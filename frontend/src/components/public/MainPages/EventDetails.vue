@@ -8,25 +8,46 @@
             <button @click="this.$router.go(-1)" class="btn btn-outline-danger">
               <i class="fas fa-arrow-left me-2"></i> Back
             </button>
+            <button
+              v-if="userRole == 'event organizer' && userId == event.eo_id"
+              class="btn btn-outline-warning"
+              v-on:click="updatePoster(event.id)">
+              <i class="fas fa-pen-to-square"></i> Change poster
+            </button>
           </div>
           <div class="d-flex justify-content-center align-items-center h-100">
             <div class="text-white text-center">
-              <h1 class="mb-3">{{ event.title }}</h1>
-              <h4 class="mb-3">{{ formatDate(event.event_date) }}</h4>
-              <a 
+              <h1 class="mb-3">
+                {{ event.title }}
+                <button
+                  v-if="userRole == 'event organizer' && userId == event.eo_id"
+                  class="btn btn-sm btn-outline-warning"
+                  v-on:click="updateEvent(event.id, 'title')">
+                  <i class="fas fa-pen-to-square"></i>
+                </button>
+              </h1>
+              <h4 class="mb-3">
+                {{ formatDate(event.event_date) }}
+                <button
+                  v-if="userRole == 'event organizer' && userId == event.eo_id"
+                  class="btn btn-sm btn-outline-warning"
+                  v-on:click="updateEvent(event.id, 'start_date')">
+                  <i class="fas fa-pen-to-square"></i>
+                </button>
+              </h4>
+              <a
                 v-if="event.registration_url"
                 class="btn btn-outline-primary btn-lg"
                 :href="event.registration_url"
-                target="_blank"
-                >Register</a
-              >
+                target="_blank">
+                Register
+              </a>
               <a
-                v-else-if="userRole == 'event organizer' && userId == event.eo_id"
+                v-if="userRole == 'event organizer' && userId == event.eo_id"
                 class="btn btn-outline-warning btn-lg"
-                :href="event.registration_url"
-                target="_blank"
-                >Add a registration link</a
-              >
+                v-on:click="updateEvent(event.id, 'registration_url')">
+                <i class="fas fa-pen-to-square"></i>
+              </a>
             </div>
           </div>
         </div>
@@ -35,10 +56,18 @@
       <div class="container my-3">
         <div class="row">
           <div class="col-md-8">
-            <router-link :to="'organizer/'+event.eo_id" class="text-primary">
-              {{ event.eo }}
+            <router-link
+              v-if="userRole == 'event organizer' && userId == event.eo_id"
+              class="btn btn-sm btn-outline-warning"
+              :to="'/edit-event/'+event.id">
+              <i class="fas fa-pen-to-square"></i> Edit description
             </router-link>
-            presents:
+            <div v-else>
+              <router-link :to="'organizer/' + event.eo_id" class="text-primary">
+                {{ event.eo }}
+              </router-link>
+              presents:
+            </div>
             <h3 class="text-primary">{{ event.title }}</h3>
             <div v-html="event.description"></div>
           </div>
@@ -49,6 +78,12 @@
       </div>
 
       <!-- Gallery -->
+      <button
+        v-if="userRole == 'event organizer' && userId == event.eo_id"
+        class="btn btn-sm btn-warning"
+        v-on:click="uploadImage(event.id)">
+        <i class="fas fa-add"></i> Add new image
+      </button>
       <h3 v-if="event.images && event.images.length > 0">Gallery</h3>
       <div class="row">
         <div class="col">
@@ -58,7 +93,15 @@
               :key="index"
               class="p-2"
               style="flex: 0 0 auto">
-              <img :src="image" alt="gambar" class="img-fluid rounded" />
+              <div class="div position-relative">
+                <button
+                  v-if="userRole == 'event organizer' && userId == event.eo_id"
+                  class="btn btn-sm btn-danger position-absolute top-0 end-0"
+                  v-on:click="deleteImage(image.id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <img :src="image.path" alt="gambar" class="img-fluid rounded galery_image" />
+              </div>
             </div>
           </div>
         </div>
@@ -115,12 +158,16 @@
                 </div>
               </div>
               <!-- Add new -->
-              
+
               <!-- Another comment -->
               <div v-if="event.comments && event.comments.length == 0">
                 <h6 class="text-secondary">No one comment yet..</h6>
               </div>
-              <div class="d-flex flex-start mb-4" v-else v-for="comment in event.comments" :key="comment">
+              <div
+                class="d-flex flex-start mb-4"
+                v-else
+                v-for="comment in event.comments"
+                :key="comment">
                 <div class="pt-4">
                   <img
                     v-if="comment.pfp"
@@ -200,8 +247,8 @@ export default {
       try {
         const response = await axios.get(`${process.env.VUE_APP_BACKEND}/event/${this.id}`);
         this.event = response.data;
-        if (this.event.eo_status != "Active"){
-          router.push('/404_');
+        if (this.event.eo_status != "Active") {
+          router.push("/404_");
         }
       } catch (error) {
         console.error("Error fetching event details:", error);
@@ -319,7 +366,7 @@ export default {
           this.fetchEventDetails();
           Swal.fire({
             title: "Comment deleted!",
-            text: "The comment has been successfully deleted.",
+            text: "The comment is successfully deleted.",
             icon: "success",
             customClass: {
               popup: "card",
@@ -348,6 +395,242 @@ export default {
           }
         }
       }
+    },
+
+    async deleteImage(id) {
+      const result = await Swal.fire({
+        title: "Delete this image?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "Cancel",
+        customClass: {
+          popup: "card",
+          title: "h5",
+          confirmButton: "btn btn-sm btn-danger me-3",
+          cancelButton: "btn btn-sm btn-secondary ms-3",
+        },
+        buttonsStyling: false,
+      });
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`${process.env.VUE_APP_BACKEND}/file/delete/${id}`);
+          console.log(response.data);
+          this.fetchEventDetails();
+        } catch (error) {
+          if (error.response) {
+            Swal.fire({
+              title: "Error!",
+              text: error.response.data.message,
+              icon: "error",
+              customClass: {
+                popup: "alert alert-danger",
+                title: "h4",
+                content: "small",
+                confirmButton: "btn btn-success",
+              },
+              buttonsStyling: false,
+            });
+          } else {
+            console.error(error);
+          }
+        }
+      }
+    },
+
+    async updateEvent(id, key) {
+      Swal.fire({
+        title: `New ${key}`,
+        input: key == "start_date" ? "date" : "text",
+        inputAttributes: {
+          autocapitalize: "off",
+          class: "form-control",
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-save"></i> Save',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        footer:
+          key == "registration_url"
+            ? '<a id="open-google-forms" class="text-primary" href="https://forms.google.com" target="_blank"><i class="fas fa-external-link-alt"></i> Create Google Form</a>'
+            : "",
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary",
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (value) => {
+          if (!value) {
+            Swal.showValidationMessage("Value can't be empty");
+            return;
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await axios.patch(
+              `${process.env.VUE_APP_BACKEND}/update/event`,
+              {
+                id: id,
+                key: key,
+                value: value,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
+            }
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(
+              `Request failed: ${error.response?.data?.message || error.message}`
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+          this.fetchEventDetails();
+        }
+      });
+    },
+
+    async updatePoster(id) {
+      Swal.fire({
+        title: `New Poster`,
+        input: "file",
+        inputAttributes: {
+          autocapitalize: "off",
+          accept: "image/*", // Hanya menerima file gambar
+          class: "form-control",
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-save"></i> Save',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary",
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (value) => {
+          if (!value) {
+            Swal.showValidationMessage("Value can't be empty");
+            return;
+          }
+
+          const file = value;
+          const formData = new FormData();
+          formData.append("id", id);
+          formData.append("poster", file);
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await axios.patch(
+              `${process.env.VUE_APP_BACKEND}/update/poster`,
+              formData,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
+            }
+
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(
+              `Request failed: ${error.response?.data?.message || error.message}`
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+        }
+      });
+    },
+
+    async uploadImage(id) {
+      Swal.fire({
+        title: `New Image`,
+        input: "file",
+        inputAttributes: {
+          autocapitalize: "off",
+          accept: "image/*",
+          class: "form-control",
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-save"></i> Save',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary",
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (value) => {
+          if (!value) {
+            Swal.showValidationMessage("Value can't be empty");
+            return;
+          }
+
+          const file = value;
+          const formData = new FormData();
+          formData.append("id", id);
+          formData.append("image", file);
+
+          try {
+            const response = await axios.post(
+              `${process.env.VUE_APP_BACKEND}/file/upload/${id}`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
+            }
+            this.fetchEventDetails();
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(
+              `Request failed: ${error.response?.data?.message || error.message}`
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+        }
+      });
     },
   },
   mounted() {
@@ -380,5 +663,9 @@ export default {
 }
 .link-muted:hover {
   color: #1266f1;
+}
+.galery_image {
+  height: 20rem;
+  width: auto;
 }
 </style>

@@ -39,7 +39,11 @@ def event_details(id):
             "eo": event.event_organizer.username,
             "eo_id": event.event_organizer.id,
             "eo_status": event.event_organizer.status,
-            "images": [image.path for image in event.images],
+            "images": [
+                {
+                    'id':image.id,
+                    'path':image.path 
+                } for image in event.images],
             "likes": [like.user_id for like in event.likes],
             "comments": [
                     {
@@ -131,6 +135,7 @@ def create_event():
 
     
     data = {
+        "id": new_event.id,
         "eo_id": new_event.eo_id,
         "eo_name": new_event.event_organizer.username,
         "title": new_event.title,

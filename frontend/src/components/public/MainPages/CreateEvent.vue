@@ -32,7 +32,7 @@
                 required />
             </div>
             <div class="mb-3">
-              <label for="validationCustom01" class="form-label">Start Date</label>
+              <label for="validationCustom01" class="form-label">Event Date</label>
               <input
                 type="date"
                 class="form-control"
@@ -40,15 +40,15 @@
                 value=""
                 required />
             </div>
-            <div class="mb-3">
-              <label for="validationCustom01" class="form-label"
-                >End Date
-                <span class="small text-secondary"
-                  >(leave it blank if the event is one-day event)</span
-                ></label
-              >
+            <!-- <div class="mb-3">
+              <label for="validationCustom01" class="form-label">
+                End Date
+                <span class="small text-secondary">
+                  (leave it blank if the event is one-day event)
+                </span>
+              </label>
               <input type="date" class="form-control" v-model="formData.end_date" value="" />
-            </div>
+            </div> -->
             <div class="d-block mt-3">
               <button class="btn btn-warning" v-on:click="nextStep">next</button>
             </div>
@@ -146,9 +146,12 @@
             </div>
           </fieldset>
           <fieldset v-show="step === 3">
-            <label for="eventImage" class="form-label"
-              >Give us picture about this event, such as road map etc.</label
-            >
+            <label for="eventImage" class="form-label">
+              Give us picture about this event, such as road map etc.
+              <span class="small text-secondary">
+                (optional)
+              </span>
+            </label>
             <file-pond
               name="test"
               ref="pond"
@@ -164,8 +167,12 @@
             </div>
           </fieldset>
           <fieldset v-show="step === 4">
-            <button v-on:click="linkPendaftaran">Tambahkan link pendaftaran</button>
-            <router-link :to="'/home'">Lihat event</router-link>
+            <div class="row my-5 justify-content-center">
+              <button v-on:click="linkPendaftaran" class="col-6 btn btn-primary">Add a registration link</button>
+            </div>
+            <div class="row text-center">
+              <router-link :to="'/home'">Lihat event</router-link>
+            </div>
           </fieldset>
         </div>
       </div>
@@ -181,14 +188,15 @@ import StarterKit from "@tiptap/starter-kit";
 import Heading from "@tiptap/extension-heading";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
-import vueFilePond from "vue-filepond";
 // Filepond
+import vueFilePond from "vue-filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.esm.js";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
 import { setOptions } from "filepond";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
@@ -207,6 +215,7 @@ export default {
         start_date: "",
         end_date: "",
       },
+      eventId: "",
       editor: null,
       posterFile: null,
       myFiles: null,
@@ -268,7 +277,8 @@ export default {
 
         const result = await response.json();
 
-        console.log(result);
+        this.eventId = result.id;
+        console.log("id:",this.eventId);
         this.step++;
       } catch (error) {
         console.error(error);
@@ -278,38 +288,60 @@ export default {
 
     async linkPendaftaran() {
       Swal.fire({
-        title: "Submit your Github username",
+        title: "Paste your registration form here",
         input: "text",
+        inputPlaceholder: "https://forms.gle/XXXXX",
         inputAttributes: {
-          autocapitalize: "off"
+          autocapitalize: "off",
+          class: "form-control"
         },
         showCancelButton: true,
-        confirmButtonText: "Look up",
+        confirmButtonText: '<i class="fas fa-save"></i> Save',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        footer: '<a id="open-google-forms" class="text-primary" href="https://forms.google.com" target="_blank"><i class="fas fa-external-link-alt"></i> Create Google Form</a>',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary"
+        },
         showLoaderOnConfirm: true,
-        preConfirm: async (login) => {
+        preConfirm: async (link) => {
+          if (!link) {
+            Swal.showValidationMessage("Url can't be empty");
+            return;
+          }
+
           try {
-            const githubUrl = `
-              https://api.github.com/users/${login}
-            `;
-            const response = await fetch(githubUrl);
-            if (!response.ok) {
-              return Swal.showValidationMessage(`
-                ${JSON.stringify(await response.json())}
-              `);
+            const token = localStorage.getItem("token");
+            const response = await axios.patch(`${process.env.VUE_APP_BACKEND}/update/event`,
+              {
+                id: this.eventId,
+                key: 'registration_url',
+                value: link
+              },
+              {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                  }
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
             }
-            return response.json();
+            return response.data;
           } catch (error) {
-            Swal.showValidationMessage(`
-              Request failed: ${error}
-            `);
+            Swal.showValidationMessage(`Request failed: ${error.response?.data?.message || error.message}`);
           }
         },
         allowOutsideClick: () => !Swal.isLoading()
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire({
-            title: `${result.value.login}'s avatar`,
-            imageUrl: result.value.avatar_url
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
           });
         }
       });

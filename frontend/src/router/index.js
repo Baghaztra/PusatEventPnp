@@ -16,6 +16,7 @@ import EventDetails from '@/components/public/MainPages/EventDetails.vue'
 import EventOrganizer from '@/components/public/MainPages/EventOrganizer.vue'
 import CreateEvent from '@/components/public/MainPages/CreateEvent.vue'
 import NotFound from '@/views/NotFound.vue'
+import EditDescription from '@/components/public/MainPages/EditDescription.vue'
 
 const routes = [
   // Main
@@ -88,6 +89,12 @@ const routes = [
     path: '/create-event',
     name: 'CreateEventPage',
     component: CreateEvent, 
+  },
+  {
+    path: '/edit-event/:id',
+    name: 'Edit Event Description',
+    component: EditDescription,
+    props: true,
   },
   {
     path: '/waiting',

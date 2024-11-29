@@ -29,7 +29,7 @@
           <button
             class="btn btn-warning me-1"
             v-else-if="userRole == 'event organizer' && userId == data.eo_id"
-            v-on:click="linkPendaftaran"
+            v-on:click="linkPendaftaran(data.id)"
           >
             Add a registration
           </button>
@@ -177,7 +177,7 @@ export default {
       }
       return text;
     },
-    async linkPendaftaran() {
+    async linkPendaftaran(event_id) {
       Swal.fire({
         title: "Paste your registration form here",
         input: "text",
@@ -203,9 +203,20 @@ export default {
           }
 
           try {
-            const response = await axios.patch(`${process.env.VUE_APP_BACKEND}/update-event`, {
-              form_url: link,
-            });
+            const token = localStorage.getItem("token");
+            const response = await axios.patch(`${process.env.VUE_APP_BACKEND}/update/event`,
+              {
+                id: event_id,
+                key: 'registration_url',
+                value: link
+              },
+              {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                  }
+              }
+            );
 
             if (response.status !== 200) {
               Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
@@ -223,6 +234,7 @@ export default {
             text: `${result.value.message}`,
             icon: "success",
           });
+          this.$emit("refresh-events");
         }
       });
     }
