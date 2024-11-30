@@ -36,7 +36,12 @@
                 </button>
               </h4>
               <a
-                v-if="event.registration_url"
+                v-if="event.registration_url && event.registration_url == 'closed'"
+                class="btn btn-primary btn-lg disabled">
+                Registration Closed
+              </a>
+              <a
+                v-else-if="event.registration_url"
                 class="btn btn-outline-primary btn-lg"
                 :href="event.registration_url"
                 target="_blank">
@@ -47,6 +52,12 @@
                 class="btn btn-outline-warning btn-lg"
                 v-on:click="updateEvent(event.id, 'registration_url')">
                 <i class="fas fa-pen-to-square"></i>
+              </a>
+              <a
+                v-if="userRole == 'event organizer' && userId == event.eo_id && event.registration_url != 'closed'"
+                class="btn btn-outline-danger btn-lg"
+                v-on:click="closeReg(event.id)">
+                <i class="fas fa-ban"></i>
               </a>
             </div>
           </div>
@@ -428,6 +439,72 @@ export default {
                 title: "h4",
                 content: "small",
                 confirmButton: "btn btn-success",
+              },
+              buttonsStyling: false,
+            });
+          } else {
+            console.error(error);
+          }
+        }
+      }
+    },
+
+    async closeReg(id) {
+      const result = await Swal.fire({
+        title: "Close registration?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-ban"></i> Yes',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        customClass: {
+          popup: "card",
+          title: "h5",
+          confirmButton: "btn btn-sm btn-danger me-3",
+          cancelButton: "btn btn-sm btn-secondary ms-3",
+        },
+        buttonsStyling: false,
+      });
+      if (result.isConfirmed) {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.patch(
+              `${process.env.VUE_APP_BACKEND}/update/event`,
+              {
+                id: id,
+                key: 'registration_url',
+                value: 'closed',
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+          console.log(response.data);
+          this.fetchEventDetails();
+          Swal.fire({
+            title: "Registration Closed",
+            icon: "success",
+            customClass: {
+              popup: "card",
+              title: "h4",
+              content: "small",
+              confirmButton: "btn btn-sm btn-success",
+            },
+            buttonsStyling: false,
+          });
+        } catch (error) {
+          if (error.response) {
+            Swal.fire({
+              title: "Error!",
+              text: error.response.data.message,
+              icon: "error",
+              customClass: {
+                popup: "alert alert-danger",
+                title: "h4",
+                content: "small",
+                confirmButton: "btn btn-sm btn-success",
               },
               buttonsStyling: false,
             });

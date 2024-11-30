@@ -20,8 +20,14 @@
         <span class="text-primary">{{ formatDate(data.event_date) }}</span>
         <div class="mb-1">
           <a
+            v-if="data.registration_url && data.registration_url == 'closed'"
+            class="btn btn-primary disabled"
+            disabled>
+            Registration Closed
+          </a>
+          <a
             class="btn btn-primary me-1"
-            v-if="data.registration_url"
+            v-else-if="data.registration_url"
             :href="data.registration_url"
             target="_blank"
             >Register</a
@@ -29,8 +35,7 @@
           <button
             class="btn btn-warning me-1"
             v-else-if="userRole == 'event organizer' && userId == data.eo_id"
-            v-on:click="linkPendaftaran(data.id)"
-          >
+            v-on:click="linkPendaftaran(data.id)">
             Add a registration
           </button>
           <router-link class="btn btn-primary me-1" :to="`/event/${data.id}`">More</router-link>
@@ -80,7 +85,8 @@ export default {
           buttonsStyling: false,
         });
         if (result.isConfirmed) {
-          const response = await axios.delete(`${process.env.VUE_APP_BACKEND}/delete/event?id=${this.data.id}`,
+          const response = await axios.delete(
+            `${process.env.VUE_APP_BACKEND}/delete/event?id=${this.data.id}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -92,21 +98,20 @@ export default {
             Swal.fire({
               title: "Deleted",
               text: response.data.message,
-              icon: "success"
+              icon: "success",
             });
             this.$emit("refresh-events");
-          }
-          else {
+          } else {
             Swal.fire({
               title: "Failed",
               text: response.data.message,
-              icon: "error"
+              icon: "error",
             });
           }
         }
       } catch (error) {
-        console.log("error",error);
-        
+        console.log("error", error);
+
         Swal.fire({
           title: "Error!",
           text: error,
@@ -184,16 +189,17 @@ export default {
         inputPlaceholder: "https://forms.gle/XXXXX",
         inputAttributes: {
           autocapitalize: "off",
-          class: "form-control"
+          class: "form-control",
         },
         showCancelButton: true,
         confirmButtonText: '<i class="fas fa-save"></i> Save',
         cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
-        footer: '<a id="open-google-forms" class="text-primary" href="https://forms.google.com" target="_blank"><i class="fas fa-external-link-alt"></i> Create Google Form</a>',
+        footer:
+          '<a id="open-google-forms" class="text-primary" href="https://forms.google.com" target="_blank"><i class="fas fa-external-link-alt"></i> Create Google Form</a>',
         customClass: {
           title: "fs-5 text-primary",
           confirmButton: "btn btn-primary",
-          cancelButton: "btn btn-secondary"
+          cancelButton: "btn btn-secondary",
         },
         showLoaderOnConfirm: true,
         preConfirm: async (link) => {
@@ -204,17 +210,18 @@ export default {
 
           try {
             const token = localStorage.getItem("token");
-            const response = await axios.patch(`${process.env.VUE_APP_BACKEND}/update/event`,
+            const response = await axios.patch(
+              `${process.env.VUE_APP_BACKEND}/update/event`,
               {
                 id: event_id,
-                key: 'registration_url',
-                value: link
+                key: "registration_url",
+                value: link,
               },
               {
-                  headers: {
-                      Authorization: `Bearer ${token}`,
-                      'Content-Type': 'application/json',
-                  }
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
               }
             );
 
@@ -223,10 +230,12 @@ export default {
             }
             return response.data;
           } catch (error) {
-            Swal.showValidationMessage(`Request failed: ${error.response?.data?.message || error.message}`);
+            Swal.showValidationMessage(
+              `Request failed: ${error.response?.data?.message || error.message}`
+            );
           }
         },
-        allowOutsideClick: () => !Swal.isLoading()
+        allowOutsideClick: () => !Swal.isLoading(),
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire({
@@ -237,7 +246,7 @@ export default {
           this.$emit("refresh-events");
         }
       });
-    }
+    },
   },
   async created() {
     try {
