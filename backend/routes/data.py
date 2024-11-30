@@ -290,6 +290,20 @@ def event_organizers():
     elif request.method == 'DELETE' and 'id' in request.args:
         eo = EventOrganizer.query.get(request.args['id'])
         if eo:
+            for event in eo.event:
+                Like.query.filter_by(event_id=event.id).delete()
+                Comment.query.filter_by(event_id=event.id).delete()
+                images = Image.query.filter_by(event_id=event.id)
+                for image in images:
+                    if image.path and os.path.exists(image.path.replace('http://localhost:5000/', '')):
+                        os.remove(image.path.replace('http://localhost:5000/', ''))
+                images.delete()
+                if event.poster and os.path.exists(event.poster.replace('http://localhost:5000/', '')):
+                    os.remove(event.poster.replace('http://localhost:5000/', ''))
+            
+            Event.query.filter_by(eo_id=eo.id).delete()
+            Follow.query.filter_by(followed_eo_id=eo.id).delete()
+            
             db.session.delete(eo)
             db.session.commit()
             return jsonify({"message": "Account deleted successfully."}), 200

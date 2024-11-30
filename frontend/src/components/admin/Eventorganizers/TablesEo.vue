@@ -39,6 +39,12 @@
                   }"></i> 
                   {{ item.status == 'Active'? 'Ban':'Activate' }}
                 </button>
+                <button 
+                  v-on:click="deleteUser(item)" 
+                  class="btn btn-sm d-inline me-2 btn-danger">
+                  <i class=" fas fa-trash"></i> 
+                  Delete
+                </button>
               </td>
             </tr>
           </tbody>
@@ -127,6 +133,54 @@ export default {
         Swal.fire({
           title: "Success!",
           text: `${user.username} has been successfully ${action}.`,
+          icon: "success",
+          customClass: {
+            title: "h4",
+            content: "small",
+            confirmButton: "btn btn-success",
+          },
+          buttonsStyling: false,
+        });
+        this.fetchData();
+      }
+    },
+    async deleteUser(user) {
+      let title = `Reject ${user.username}`;
+      let msg = `${user.username} will be deleted forever.`;
+
+      const result = await Swal.fire({
+        title: title,
+        text: msg,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-triangle-exclamation"></i> Yes',
+        cancelButtonText: '<i class="fas fa-xmark"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-success"
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+          try {
+            var response;
+            response = await axios.delete(`${process.env.VUE_APP_BACKEND}/event_organizers?id=${user.id}`);
+            return response.data; 
+          } catch (error) {
+            if (error.response) {
+              Swal.showValidationMessage(`Error: ${error.response.data.message}`);
+            } else {
+              Swal.showValidationMessage(`Request failed: ${error.message}`);
+            }
+            throw error;
+          }
+        }
+      });
+
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Success!",
+          text: `${user.username} is deleted successfully.`,
           icon: "success",
           customClass: {
             title: "h4",

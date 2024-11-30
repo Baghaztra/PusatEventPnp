@@ -40,7 +40,7 @@ def requested_eo():
     eo_list = [
         {
             "id": eo.id, 
-            "name": eo.name, 
+            "username": eo.username, 
             "logo": eo.profile_picture, 
             "bio": eo.bio, 
             "created_at": eo.created_at
