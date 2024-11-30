@@ -4,6 +4,8 @@ import AdminDashboard from '@/components/admin/AdminDashboard.vue'
 import TablesAc from '@/components/admin/Accounts/TablesAc.vue'
 import TablesEv from '@/components/admin/Events/TablesEv.vue'
 import { auth } from './middleware/auth'
+import { admin } from './middleware/admin'
+import { eo } from './middleware/eo'
 import Login from '@/components/public/LandingPages/Login.vue'
 import Register from '@/components/public/LandingPages/Register.vue'
 import Eologin from '@/components/public/LandingPages/Eologin.vue'
@@ -89,12 +91,14 @@ const routes = [
     path: '/create-event',
     name: 'CreateEventPage',
     component: CreateEvent, 
+    beforeEnter: eo
   },
   {
     path: '/edit-event/:id',
     name: 'Edit Event Description',
     component: EditDescription,
     props: true,
+    beforeEnter: eo
   },
   {
     path: '/waiting',
@@ -108,25 +112,25 @@ const routes = [
     path: '/admin',
     name: 'AdminDashboard',
     component: AdminDashboard,
-    beforeEnter: auth
+    beforeEnter: admin
   },
   {
     path: '/admin/accounts',
     name: 'AdminAccounts',
     component: TablesAc,
-    beforeEnter: auth
+    beforeEnter: admin
   },
   {
     path: '/admin/eo',
     name: 'AdminEventorganizers',
     component: TablesEo,
-    beforeEnter: auth
+    beforeEnter: admin
   },
   {
     path: '/admin/events',
     name: 'AdminEvents',
     component: TablesEv,
-    beforeEnter: auth
+    beforeEnter: admin
   },
 ]
 
