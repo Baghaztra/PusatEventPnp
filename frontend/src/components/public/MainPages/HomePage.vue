@@ -2,6 +2,15 @@
     <HomeLayout>
       <div class="container my-3">
         <h2 class="text-primary">Upcomming Events</h2>
+        <div class="btn-group mb-3">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ filter }}
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" v-on:click="setFilter('All')">All</a></li>
+            <li><a class="dropdown-item" v-on:click="setFilter('Comming soon')">Comming soon</a></li>
+          </ul>
+        </div>
         <div class="row">
           <CardComponent 
             v-for="(event, index) in events" 
@@ -29,6 +38,7 @@ export default {
   data() {
     return {
       events: [],
+      filter: 'All',
       loading: false,
     };
   },
@@ -39,7 +49,7 @@ export default {
       
       try {
         const response = await axios.get(
-          `${process.env.VUE_APP_BACKEND}/event-latest`
+          `${process.env.VUE_APP_BACKEND}/event-latest?filter=${this.filter}`
         );
         this.events = response.data;
       } catch (error) {
@@ -58,6 +68,10 @@ export default {
         window.location.reload();
       }
     },
+    setFilter(filter){
+      this.filter = filter;
+      this.fetchEvents();
+    }
   },
   created() {
     this.fetchEvents();

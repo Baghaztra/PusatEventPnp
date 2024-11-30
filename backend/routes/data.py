@@ -9,7 +9,11 @@ data_bp = Blueprint('data', __name__)
 
 @data_bp.route('/event-latest')
 def event_latest():
-    events = Event.query.order_by(Event.start_date.desc())
+    fltr = request.args.get('filter')
+    if(fltr == 'Comming soon'):
+        events = Event.query.filter(Event.start_date > datetime.now()).order_by(Event.start_date.asc())
+    else:
+        events = Event.query.order_by(Event.start_date.desc())
 
     events_list = [
         {
