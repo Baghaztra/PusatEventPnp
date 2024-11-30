@@ -304,3 +304,46 @@ def event_file_delete(id):
         return jsonify({'message': 'File deleted successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@eo_bp.route('/send-email-event', methods=['POST'])
+@jwt_required()
+def sendEmailEvent():
+    try:
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+        user = EventOrganizer.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 400
+        
+        data = request.get_json()
+        event_id = data.get('id')
+        message = data.get('message')
+        if not event_id or not message:
+            return jsonify({"error": "Missing required fields"}), 400
+        
+        recipients = [follow.follower.email for follow in user.followers]
+        print(recipients)
+        msg = Message(
+            user.username,
+            sender="noreply@app.com",
+            recipients=recipients
+        )
+        data = {
+            'title': "New Event Announced",
+            'message': message,
+            'goto': f"http://127.0.0.1:8080/event/{event_id}",
+            'goto_msg': "Go to event",
+        }
+
+        msg.html = render_template("info.html", **data)
+
+        try:
+            mail.send(msg)
+            return {"message": f"Email sent successfully to your followers"}
+        except Exception as e:
+            print(f"Email Error: {e}")
+            raise
+
+    except Exception as e:
+        print("error deleting event",e)
+        return jsonify({'message': str(e)}), 500

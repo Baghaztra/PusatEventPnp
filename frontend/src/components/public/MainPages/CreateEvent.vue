@@ -170,6 +170,9 @@
             <div class="row my-5 justify-content-center">
               <button v-on:click="linkPendaftaran" class="col-6 btn btn-primary">Add a registration link</button>
             </div>
+            <div class="row my-5 justify-content-center">
+              <button v-on:click="sendEmail" class="col-6 btn btn-primary">Let your followers know</button>
+            </div>
             <div class="row text-center">
               <router-link :to="'/home'">Lihat event</router-link>
             </div>
@@ -285,7 +288,6 @@ export default {
         alert("Error submitting form.");
       }
     },
-
     async linkPendaftaran() {
       Swal.fire({
         title: "Paste your registration form here",
@@ -345,7 +347,67 @@ export default {
           });
         }
       });
-    }
+    },
+    async sendEmail() {
+      Swal.fire({
+        title: "Send email to your followers",
+        input: "text",
+        icon: 'info',
+        inputPlaceholder: "Let your followers know about this event",
+        inputValue: "Hello everyone! We have new event!",
+        inputAttributes: {
+          autocapitalize: "off",
+          class: "form-control"
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-paper-plane"></i> Save',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-success",
+          cancelButton: "btn btn-secondary"
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (message) => {
+          if (!message) {
+            Swal.showValidationMessage("Message can't be empty");
+            return;
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post(`${process.env.VUE_APP_BACKEND}/send-email-event`,
+              {
+                id: this.eventId,
+                message: message
+              },
+              {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                  }
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
+            }
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error.response?.data?.message || error.message}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+        }
+      });
+    },
   },
   mounted() {
     this.editor = new Editor({
