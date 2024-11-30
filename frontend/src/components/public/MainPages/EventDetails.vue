@@ -197,6 +197,12 @@
                 </div>
                 <div class="card w-100">
                   <div class="card-body p-4">
+                    <button
+                      class="btn btn-outline-danger btn-sm me-1 mt-1 position-absolute top-0 end-0"
+                      v-if="userRole && userRole != 'event organizer' && userId != comment.user_id"
+                      v-on:click="report(comment.user_id)">
+                      <i class="fas fa-flag"></i>
+                    </button>
                     <h5>{{ comment.username }}</h5>
                     <p class="small text-secondary">{{ comment.created_at }}</p>
                     <p>
@@ -706,6 +712,71 @@ export default {
             text: `${result.value.message}`,
             icon: "success",
           });
+        }
+      });
+    },
+
+    async report(user_id) {
+      Swal.fire({
+        title: `Report this comment?`,
+        input: "text",
+        icon: "warning",
+        inputPlaceholder: "Tell us what's wrong with this comment",
+        inputAttributes: {
+          autocapitalize: "off",
+          class: "form-control",
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-flag"></i> Report',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-secondary",
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (message) => {
+          if (!message) {
+            Swal.showValidationMessage("Message can't be empty");
+            return;
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post(
+              `${process.env.VUE_APP_BACKEND}/report`,
+              {
+                id: user_id,
+                type: "user",
+                message: message,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`${response.data.message || "Error"}`);
+            }
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(
+              `Request failed: ${error.response?.data?.message || error.message}`
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+          this.$emit("refresh-events");
         }
       });
     },

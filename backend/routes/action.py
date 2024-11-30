@@ -119,23 +119,24 @@ def subscribe(eid):
     else:
         return jsonify({"message": "User not found."}), 404
 
-@action_bp.route('/report/<role>/<id>/<why>', methods=['POST'])
+@action_bp.route('/report', methods=['POST'])
 @jwt_required() 
-def report(role, uid, why):
+def report():
     identity = get_jwt_identity()
     user_id = identity.get('user_id')
     
     if not user_id:
         return jsonify({"message": "User ID not found in token."}), 400
     
+    data = request.get_json()
     user = User.query.get(user_id)    
     if user:
         report = Report(
-            reported_by_id=user_id,
-            reported_id=uid,
-            reported_type=role,
-            reason=why,
-            created_at=datetime.now()
+            reported_by_id = user_id,
+            reported_id = data.get('id'),
+            reported_type = data.get('type'),
+            reason = data.get('message'),
+            created_at = datetime.now()
         )
         db.session.add(report)
         db.session.commit()
@@ -145,19 +146,3 @@ def report(role, uid, why):
     else:
         return jsonify({"message": "User not found."}), 404
 
-
-# @action_bp.route('/file/upload', methods=['POST'])
-# @jwt_required() 
-# def file_upload():
-#     print('file upload')
-#     identity = get_jwt_identity()
-#     user_id = identity.get('user_id')
-#     return jsonify({'user_id': user_id}), 200
-
-# @action_bp.route('/file/delete', methods=['DELETE'])
-# @jwt_required() 
-# def file_delete():
-#     print('file delete')
-#     identity = get_jwt_identity()
-#     user_id = identity.get('user_id')
-#     return jsonify({'user_id': user_id}), 200

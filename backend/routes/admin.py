@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from flask_mail import Message
-from models import EventOrganizer, User
+from models import EventOrganizer, User, Report, Event
 from app import db, mail
 
 admin_bp = Blueprint('admin', __name__)
@@ -98,3 +98,73 @@ def ban():
         db.session.rollback()
         print(f"Erro: {e}")
         return jsonify({"message": "Failed to"}), 500
+
+@admin_bp.route('/reports', methods=['GET', 'DELETE'])
+def reports():
+    if request.method == 'GET':
+        reports = Report.query.order_by(Report.created_at)
+        
+        reportList = []
+        for report in reports:
+            reported_by = User.query.get(report.reported_by_id)
+
+            valid = True
+            if report.reported_type == 'eo':
+                reported = EventOrganizer.query.get(report.reported_id)
+                reported_data = {
+                    "id": reported.id,
+                    "name": reported.username,
+                    "email": reported.email
+                } if reported else None
+            elif report.reported_type == 'user':
+                reported = User.query.get(report.reported_id)
+                reported_data = {
+                    "id": reported.id,
+                    "name": reported.username,
+                    "email": reported.email
+                } if reported else None
+            elif report.reported_type == 'event':
+                reported = Event.query.get(report.reported_id)
+                reported_data = {
+                    "id": reported.id,
+                    "name": reported.title,
+                    "email": ""
+                } if reported else None
+            else:
+                reported_data = None
+
+            data = {
+                "id": report.id,
+                "reported_by": {
+                    "id": reported_by.id,
+                    "username": reported_by.username,
+                    "email": reported_by.email
+                } if reported_by else None,
+                "reported": reported_data,
+                "reported_type": report.reported_type,
+                "message": report.reason,
+                "created_at": report.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            }
+            if data["reported_by"] == None:
+                valid = False
+            if reported_data != None and valid :
+                reportList.append(data)
+
+        return jsonify(reportList), 200
+
+    
+    elif request.method == 'DELETE' and 'id' in request.args:
+        report = Report.query.get(request.args['id'])
+        if report:
+            similar_reports = Report.query.filter_by(
+                reported_id=report.reported_id,
+                reported_type=report.reported_type
+            ).all()
+            
+            for similar_report in similar_reports:
+                db.session.delete(similar_report)
+            db.session.commit()
+            return jsonify({"message": "Report deleted successfully."}), 200
+        return jsonify({"message": "Report not found."}), 404
+
+    return jsonify({"message": "Something went wrong :("}), 404

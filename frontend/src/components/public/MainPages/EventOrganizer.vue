@@ -1,6 +1,6 @@
 <template>
   <HomeLayout>
-    <div class="container" style="min-height: 75vh;">
+    <div class="container" style="min-height: 75vh">
       <div class="position-absolute top-0 start-0 mt-5 ms-5">
         <button @click="this.$router.go(-1)" class="btn btn-outline-danger">
           <i class="fas fa-arrow-left me-2"></i> Back
@@ -8,16 +8,32 @@
       </div>
       <div class="container my-3 mt-5">
         <div class="card p-3">
+          <button
+            class="btn btn-outline-danger btn-sm me-1 mt-1 position-absolute top-0 end-0"
+            v-if="role && role != 'event organizer'"
+            v-on:click="report(eodata.id)">
+            <i class="fas fa-flag"></i>
+          </button>
           <div class="d-flex">
             <div class="image">
               <img :src="eodata.profile_picture" class="rounded" width="155" />
             </div>
 
-            <div class="ml-3 w-100">
+            <div class="ml-3 ms-3 w-100">
               <div class="d-flex align-items-center">
                 <h4 class="mb-0 mt-0 d-inline me-3">{{ eodata.username }}</h4>
-                <button v-if="this.role != 'event organizer' && !isFollowing" class="btn btn-sm btn-primary d-inline" v-on:click="toggleFollow">Follow</button>
-                <button v-else-if="this.role != 'event organizer' && isFollowing" class="btn btn-sm btn-outline-primary d-inline" v-on:click="toggleFollow">Unfollow</button>
+                <button
+                  v-if="this.role != 'event organizer' && !isFollowing"
+                  class="btn btn-sm btn-primary d-inline"
+                  v-on:click="toggleFollow">
+                  Follow
+                </button>
+                <button
+                  v-else-if="this.role != 'event organizer' && isFollowing"
+                  class="btn btn-sm btn-outline-primary d-inline"
+                  v-on:click="toggleFollow">
+                  Unfollow
+                </button>
               </div>
               <div class="d-flex rounded stats">
                 <div class="d-inline pe-2">
@@ -29,7 +45,7 @@
                   <span class="small text-secondary mx-1">{{ eodata.subs?.length ?? 0 }}</span>
                 </div>
               </div>
-              <div class=" mt-2 row">
+              <div class="mt-2 row">
                 <p>
                   {{ eodata.bio }}
                 </p>
@@ -85,7 +101,7 @@ export default {
       userName: "",
       userId: "",
       role: "",
-      isOwner: false
+      isOwner: false,
     };
   },
   watch: {
@@ -95,19 +111,21 @@ export default {
     async fetchEoData() {
       this.loading = true;
       try {
-        const response = await axios.get(`${process.env.VUE_APP_BACKEND}/event_organizers?id=${this.id}`);
+        const response = await axios.get(
+          `${process.env.VUE_APP_BACKEND}/event_organizers?id=${this.id}`
+        );
         this.eodata = response.data;
-        if (!this.eodata || this.eodata.status != "Active"){
-          router.push('/404_');
+        if (!this.eodata || this.eodata.status != "Active") {
+          router.push("/404_");
         }
-        
-        this.isFollowing = this.eodata.subs.includes(this.userId); 
+
+        this.isFollowing = this.eodata.subs.includes(this.userId);
       } catch (error) {
         console.error("Error fetching event-organizer details:", error);
       } finally {
         this.loading = false;
       }
-      if(this.role == 'event organizer' && this.userId == this.eodata.id){
+      if (this.role == "event organizer" && this.userId == this.eodata.id) {
         this.isOwner = true;
       }
     },
@@ -147,11 +165,10 @@ export default {
           }
         );
         // console.log(response.data.message);
-        this.isFollowing = !this.isFollowing; 
+        this.isFollowing = !this.isFollowing;
         // console.log("following: ", this.isFollowing);
         this.fetchEoData();
-        // this.isFollowing = response.data.liked; 
-
+        // this.isFollowing = response.data.liked;
       } catch (error) {
         console.error("Error saat mengirim permintaan like:", error);
         Swal.fire({
@@ -166,6 +183,71 @@ export default {
           }
         });
       }
+    },
+
+    async report(user_id) {
+      Swal.fire({
+        title: `Report this EO?`,
+        input: "text",
+        icon: "warning",
+        inputPlaceholder: "Tell us what's wrong with this EO",
+        inputAttributes: {
+          autocapitalize: "off",
+          class: "form-control",
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-flag"></i> Report',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-secondary",
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (message) => {
+          if (!message) {
+            Swal.showValidationMessage("Message can't be empty");
+            return;
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post(
+              `${process.env.VUE_APP_BACKEND}/report`,
+              {
+                id: user_id,
+                type: "eo",
+                message: message,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`${response.data.message || "Error"}`);
+            }
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(
+              `Request failed: ${error.response?.data?.message || error.message}`
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+          this.$emit("refresh-events");
+        }
+      });
     },
   },
   mounted() {

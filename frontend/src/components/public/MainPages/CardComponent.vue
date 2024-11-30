@@ -7,6 +7,12 @@
         v-on:click="deleteEvent">
         <i class="fas fa-trash-can"></i>
       </button>
+      <button
+        class="btn btn-outline-danger btn-sm me-1 mt-1 position-absolute top-0 end-0"
+        v-else-if="userRole && userRole != 'event organizer'"
+        v-on:click="report(data.id)">
+        <i class="fas fa-flag"></i>
+      </button>
       <img
         :src="data.poster"
         alt="Event Image"
@@ -14,14 +20,14 @@
         style="width: 100%; aspect-ratio: 3 / 4" />
       <div class="col-body d-flex flex-column">
         <h5 class="text-primary" style="font-weight: bold">{{ data.title }}</h5>
-        <span class="text-secondary"
-          >By <router-link :to="`/organizer/${data.eo_id}`">{{ data.eo }}</router-link></span
-        >
+        <span class="text-secondary">
+          By <router-link :to="`/organizer/${data.eo_id}`">{{ data.eo }}</router-link>
+        </span>
         <span class="text-primary">{{ formatDate(data.event_date) }}</span>
         <div class="mb-1">
           <a
             v-if="data.registration_url && data.registration_url == 'closed'"
-            class="btn btn-primary disabled"
+            class="btn btn-primary me-1 disabled"
             disabled>
             Registration Closed
           </a>
@@ -227,6 +233,70 @@ export default {
 
             if (response.status !== 200) {
               Swal.showValidationMessage(`Gagal menyimpan: ${response.data.message || "Error"}`);
+            }
+            return response.data;
+          } catch (error) {
+            Swal.showValidationMessage(
+              `Request failed: ${error.response?.data?.message || error.message}`
+            );
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Success!",
+            text: `${result.value.message}`,
+            icon: "success",
+          });
+          this.$emit("refresh-events");
+        }
+      });
+    },
+    async report(event_id) {
+      Swal.fire({
+        title: `Report event "${this.data.title}"`,
+        input: "text",
+        icon: "warning",
+        inputPlaceholder: "Tell us what's wrong with this content",
+        inputAttributes: {
+          autocapitalize: "off",
+          class: "form-control",
+        },
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-flag"></i> Report',
+        cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
+        customClass: {
+          title: "fs-5 text-primary",
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-secondary",
+        },
+        showLoaderOnConfirm: true,
+        preConfirm: async (message) => {
+          if (!message) {
+            Swal.showValidationMessage("Message can't be empty");
+            return;
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await axios.post(
+              `${process.env.VUE_APP_BACKEND}/report`,
+              {
+                id: event_id,
+                type: "event",
+                message: message,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.status !== 200) {
+              Swal.showValidationMessage(`${response.data.message || "Error"}`);
             }
             return response.data;
           } catch (error) {

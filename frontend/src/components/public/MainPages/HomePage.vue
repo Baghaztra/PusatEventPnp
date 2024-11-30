@@ -45,7 +45,6 @@ export default {
   methods: {
     async fetchEvents() {
       this.loading = true;
-      console.log("isi env",process.env.VUE_APP_BACKEND);
       
       try {
         const response = await axios.get(

@@ -145,7 +145,7 @@ export default {
       }
     },
     async deleteUser(user) {
-      let title = `Reject ${user.username}`;
+      let title = `Delete account ${user.username}`;
       let msg = `${user.username} will be deleted forever.`;
 
       const result = await Swal.fire({
