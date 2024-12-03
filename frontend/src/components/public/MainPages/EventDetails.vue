@@ -74,7 +74,7 @@
               <i class="fas fa-pen-to-square"></i> Edit description
             </router-link>
             <div v-else>
-              <router-link :to="'organizer/' + event.eo_id" class="text-primary">
+              <router-link :to="'/organizer/' + event.eo_id" class="text-primary">
                 {{ event.eo }}
               </router-link>
               presents:
@@ -369,8 +369,8 @@ export default {
         customClass: {
           popup: "card",
           title: "h5",
-          confirmButton: "btn btn-sm btn-danger me-3",
-          cancelButton: "btn btn-sm btn-secondary ms-3",
+          confirmButton: "btn btn-danger me-3",
+          cancelButton: "btn btn-secondary ms-3",
         },
         buttonsStyling: false,
       });
@@ -389,7 +389,7 @@ export default {
               popup: "card",
               title: "h4",
               content: "small",
-              confirmButton: "btn btn-sm btn-success",
+              confirmButton: "btn btn-success",
             },
             buttonsStyling: false,
           });
@@ -403,7 +403,7 @@ export default {
                 popup: "alert alert-danger",
                 title: "h4",
                 content: "small",
-                confirmButton: "btn btn-sm btn-success",
+                confirmButton: "btn btn-success",
               },
               buttonsStyling: false,
             });
@@ -424,8 +424,8 @@ export default {
         customClass: {
           popup: "card",
           title: "h5",
-          confirmButton: "btn btn-sm btn-danger me-3",
-          cancelButton: "btn btn-sm btn-secondary ms-3",
+          confirmButton: "btn btn-danger me-3",
+          cancelButton: "btn btn-secondary ms-3",
         },
         buttonsStyling: false,
       });
@@ -465,8 +465,8 @@ export default {
         customClass: {
           popup: "card",
           title: "h5",
-          confirmButton: "btn btn-sm btn-danger me-3",
-          cancelButton: "btn btn-sm btn-secondary ms-3",
+          confirmButton: "btn btn-danger me-3",
+          cancelButton: "btn btn-secondary ms-3",
         },
         buttonsStyling: false,
       });
@@ -496,7 +496,7 @@ export default {
               popup: "card",
               title: "h4",
               content: "small",
-              confirmButton: "btn btn-sm btn-success",
+              confirmButton: "btn btn-success",
             },
             buttonsStyling: false,
           });
@@ -510,7 +510,7 @@ export default {
                 popup: "alert alert-danger",
                 title: "h4",
                 content: "small",
-                confirmButton: "btn btn-sm btn-success",
+                confirmButton: "btn btn-success",
               },
               buttonsStyling: false,
             });

@@ -10,8 +10,8 @@ faker = Faker()
 def seed_test_user():
     print(f"Seeding test users...")
     user = User(
-        username = "Test User",
-        email = "text@example.com",
+        username = "Admin",
+        email = "admin@example.com",
         password = '1',
         status = 'Active',
         profile_picture = 'https://loremflickr.com/360/360',
@@ -30,7 +30,8 @@ def seed_users(n=10):
             password='password',
             status='Active',
             profile_picture = 'https://loremflickr.com/360/360',
-            role=random.choice(['user', 'admin']),
+            # role=random.choice(['user', 'admin']),
+            role='user',
             created_at=datetime.now()
         )
         db.session.add(user)
@@ -42,7 +43,7 @@ def seed_event_organizers(n=5):
         eo = EventOrganizer(
             username=faker.user_name(),
             email=faker.email(),
-            password=faker.password(),
+            password='password',
             status='Active',
             profile_picture = "https://loremflickr.com/360/360",
             bio=faker.text(),

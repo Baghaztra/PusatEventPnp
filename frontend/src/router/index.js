@@ -13,12 +13,12 @@ import Eoregister from '@/components/public/LandingPages/Eoregister.vue'
 import HomePage from '@/components/public/MainPages/HomePage.vue'
 import Waiting from '@/components/public/LandingPages/Waiting.vue'
 import TablesEo from '@/components/admin/Eventorganizers/TablesEo.vue'
-import HomeLayout from '@/views/HomeLayout.vue'
 import EventDetails from '@/components/public/MainPages/EventDetails.vue'
 import EventOrganizer from '@/components/public/MainPages/EventOrganizer.vue'
 import CreateEvent from '@/components/public/MainPages/CreateEvent.vue'
 import NotFound from '@/views/NotFound.vue'
 import EditDescription from '@/components/public/MainPages/EditDescription.vue'
+import CalendarComponet from '@/components/public/MainPages/CalendarComponet.vue'
 
 const routes = [
   // Main
@@ -28,9 +28,9 @@ const routes = [
     component: LandingPage
   },
   {
-    path: '/test',
-    name: 'CobaCoba',
-    component: HomeLayout
+    path: '/calendar',
+    name: 'Calendar',
+    component: CalendarComponet
   },
   {
     path: '/home',

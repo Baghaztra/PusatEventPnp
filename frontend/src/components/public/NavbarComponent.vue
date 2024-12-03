@@ -17,7 +17,7 @@
             style="width: 34px; height: 34px" />
           <img
             v-else
-            src="@/assets/logo.png"
+            src="../../../public/logo pnp.svg"
             alt="logo"
             class="profile-image rounded-circle"
             style="width: 34px; height: 34px" />
@@ -45,7 +45,7 @@
               <router-link class="nav-link" to="/home">Home</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/">Landing page</router-link>
+              <router-link class="nav-link" to="/calendar">Calendar</router-link>
             </li>
             <li class="nav-item" v-if="role == 'event organizer'">
               <router-link class="nav-link" :to="'/organizer/'+user_id">Profile</router-link>
@@ -62,7 +62,7 @@
             </li>
             <li class="nav-item" v-else>
               <!-- Show Log out button if logged in -->
-              <a href="#" @click.prevent="logout" class="nav-link text-primary me-2">Log out</a>
+              <a href="#" @click.prevent="logout" class="nav-link text-danger me-2">Log out</a>
             </li>
           </ul>
         </div>
@@ -76,6 +76,7 @@
 
 <script>
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default {
   name: "NavbarComponent",
@@ -113,29 +114,44 @@ export default {
         this.userName = data.username; 
         this.role = data.role; 
 
-        console.log(this.role);
+        // console.log(this.role);
         
-
       } catch (error) {
-        if (error.response) {
-          console.error("Gagal mengambil data profil pengguna:", error.response);
-        } else {
-          console.error("Error:", error.message);
-        }
+        // if (error.response) {
+        //   console.error("Gagal mengambil data profil pengguna:", error.response);
+        // } else {
+        //   console.error("Error:", error.message);
+        // }
       }
     },
     logout() {
-      localStorage.removeItem("token");
-      this.isLoggedIn = false;
-      this.profilePicture = "";
-      this.userName = "";
-      this.$router.push("/login");
+      Swal.fire({
+        title: "Logout",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "Cancel",
+        customClass: {
+          title: "h5",
+          confirmButton: "btn btn-danger me-3",
+          cancelButton: "btn btn-secondary ms-3",
+        },
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("token");
+          this.isLoggedIn = false;
+          this.profilePicture = "";
+          this.userName = "";
+          this.$router.push("/login");
+        }
+      });
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .profile-container {
   width: 3rem;
   height: 3rem;
@@ -147,5 +163,13 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.router-link-active {
+  font-weight: bold;
+  color: #fff !important;
+  background-color: #e95420;
+  text-align: center;
+  border-radius: 0.375rem
 }
 </style>

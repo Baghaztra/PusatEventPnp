@@ -8,6 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/vue3": "^6.1.15",
     "@tiptap/pm": "^2.10.2",
     "@tiptap/starter-kit": "^2.10.2",
     "@tiptap/vue-3": "^2.10.2",
