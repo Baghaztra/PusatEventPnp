@@ -86,7 +86,7 @@ export default {
           cancelButtonText: "Cancel",
           customClass: {
             confirmButton: "btn btn-danger me-3",
-            cancelButton: "btn btn-success ms-3",
+            cancelButton: "btn btn-secondary ms-3",
           },
           buttonsStyling: false,
         });
@@ -268,7 +268,7 @@ export default {
         cancelButtonText: '<i class="fas fa-cancel"></i> Cancel',
         customClass: {
           title: "fs-5 text-primary",
-          confirmButton: "btn btn-danger",
+          confirmButton: "btn btn-primary",
           cancelButton: "btn btn-secondary",
         },
         showLoaderOnConfirm: true,
@@ -322,7 +322,7 @@ export default {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.error("Token tidak ditemukan. User belum login.");
+        // console.error("Token tidak ditemukan. User belum login.");
         return;
       }
 

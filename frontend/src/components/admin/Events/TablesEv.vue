@@ -74,8 +74,8 @@ export default {
           confirmButtonText: "Yes, Delete it",
           cancelButtonText: "Cancel",
           customClass: {
-            confirmButton: "btn btn-danger me-3",
-            cancelButton: "btn btn-success ms-3",
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-secondary ms-3",
           },
           buttonsStyling: false,
         });

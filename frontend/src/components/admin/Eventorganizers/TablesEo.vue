@@ -96,15 +96,18 @@ export default {
         text: msg,
         icon: 'warning',
         showCancelButton: true,
+        input: 'text',
+        inputPlaceholder: 'Enter a message...',
+        inputValue: action == 'banned'? `${user.username} is banned due to our policy` : `${user.username} is no longger banned`,
         confirmButtonText: '<i class="fas fa-triangle-exclamation"></i> Yes',
         cancelButtonText: '<i class="fas fa-xmark"></i> Cancel',
         customClass: {
           title: "fs-5 text-primary",
-          confirmButton: "btn btn-danger",
-          cancelButton: "btn btn-success"
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary"
         },
         showLoaderOnConfirm: true,
-        preConfirm: async () => {
+        preConfirm: async (message) => {
           try {
             var response;
             if (user.status == "Waiting Admin") {
@@ -114,7 +117,8 @@ export default {
             }else{
               response = await axios.patch(`${process.env.VUE_APP_BACKEND}/ban`, {
                 user_id: user.id,
-                role: 'event organizer'
+                role: 'event organizer',
+                message: message
               });
             }
             return response.data; 
@@ -157,8 +161,8 @@ export default {
         cancelButtonText: '<i class="fas fa-xmark"></i> Cancel',
         customClass: {
           title: "fs-5 text-primary",
-          confirmButton: "btn btn-danger",
-          cancelButton: "btn btn-success"
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary"
         },
         showLoaderOnConfirm: true,
         preConfirm: async () => {

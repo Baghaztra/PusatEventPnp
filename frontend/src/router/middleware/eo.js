@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function admin(to, from, next) {
+export async function eo(to, from, next) {
   const token = localStorage.getItem("token"); // Ambil token dari localStorage
   if (!token) {
     // Jika tidak ada token, arahkan ke HomePage

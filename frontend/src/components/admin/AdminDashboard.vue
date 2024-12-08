@@ -133,8 +133,8 @@ export default {
         cancelButtonText: '<i class="fas fa-xmark"></i> Cancel',
         customClass: {
           title: "fs-5 text-primary",
-          confirmButton: "btn btn-danger",
-          cancelButton: "btn btn-success"
+          confirmButton: "btn btn-success",
+          cancelButton: "btn btn-danger"
         },
         showLoaderOnConfirm: true,
         preConfirm: async () => {
@@ -184,7 +184,7 @@ export default {
         customClass: {
           title: "fs-5 text-primary",
           confirmButton: "btn btn-danger",
-          cancelButton: "btn btn-success"
+          cancelButton: "btn btn-secondary"
         },
         showLoaderOnConfirm: true,
         preConfirm: async () => {
@@ -234,7 +234,7 @@ export default {
         customClass: {
           title: "fs-5 text-primary",
           confirmButton: "btn btn-danger",
-          cancelButton: "btn btn-success"
+          cancelButton: "btn btn-secondary"
         },
         showLoaderOnConfirm: true,
         preConfirm: async () => {

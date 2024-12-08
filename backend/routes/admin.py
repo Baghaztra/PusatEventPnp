@@ -89,10 +89,35 @@ def ban():
             user.status = 'Active'
         else:
             user.status = 'Banned'
-        msg =  f"{user.username} has been {user.status}"
+        message = message = request.json.get('message') or f"{user.username} is {user.status}"
         db.session.commit()
 
-        sendEmail([user.email], msg, role, user.status)
+        sendEmail([user.email], message, role, user.status)
+        return jsonify({"message": message}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erro: {e}")
+        return jsonify({"message": "Failed to"}), 500
+
+@admin_bp.route('/role-admin', methods=['PATCH'])
+def role_admin():
+    user_id = request.json.get('user_id')
+    if not user_id:
+        return jsonify({"message": "Valid ID is required"}), 404
+    
+    user = User.query.get(user_id) 
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
+    try:
+        if user.role == 'admin':
+            user.role = 'user'
+        else:
+            user.role = 'admin'
+        msg =  f"{user.username} is now {user.role} of Pusat Event"
+        db.session.commit()
+
+        sendEmail([user.email], msg, user.role, user.status)
         return jsonify({"message": msg}), 200
     except Exception as e:
         db.session.rollback()

@@ -249,13 +249,29 @@ export default {
       if (!this.formData.title || !this.posterFile || !this.formData.start_date || !this.editor?.getHTML()?.trim()) {
         Swal.fire({
           title: "Error!",
-          text: "Lengkapi seluruh data!",
+          text: "Fill all required data!",
           icon: "error",
           customClass: {
             popup: "alert alert-danger",
             title: "h4",
             content: "small",
-            confirmButton: "btn btn-danger",
+            confirmButton: "btn btn-primary",
+          },
+          buttonsStyling: false,
+        });
+        return;
+      }
+      const now = new Date(); 
+      const startDate = new Date(this.formData.start_date);
+      if (startDate <= now){
+        Swal.fire({
+          title: "Error!",
+          text: "The start date has already passed!",
+          icon: "error",
+          customClass: {
+            title: "h4",
+            content: "small",
+            confirmButton: "btn btn-primary",
           },
           buttonsStyling: false,
         });

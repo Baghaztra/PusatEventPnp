@@ -84,6 +84,9 @@ def create_event():
     description = request.form.get('description')
 
     poster = request.files.get('poster')
+    event_date_v = datetime.strptime(start_date, "%Y-%m-%d")
+    if(event_date_v <= datetime.now()):
+        return jsonify({"message": "Event is out of date"}), 400
 
     new_event = Event(
         eo_id = eo_id,
@@ -211,6 +214,11 @@ def users():
     elif request.method == 'DELETE' and 'id' in request.args:
         user = User.query.get(request.args['id'])
         if user:
+            Comment.query.filter_by(user_id=user.id).delete()
+            Like.query.filter_by(user_id=user.id).delete()
+            Follow.query.filter_by(follower_id=user.id).delete()
+            Report.query.filter_by(reported_by_id=user.id).delete()
+            Report.query.filter_by(reported_id=user.id).filter_by(reported_type='user').delete()
             db.session.delete(user)
             db.session.commit()
             return jsonify({"message": "User deleted successfully."}), 200
@@ -307,7 +315,7 @@ def event_organizers():
             
             Event.query.filter_by(eo_id=eo.id).delete()
             Follow.query.filter_by(followed_eo_id=eo.id).delete()
-            
+            Report.query.filter_by(reported_id=eo.id).filter_by(reported_type='eo').delete()
             db.session.delete(eo)
             db.session.commit()
             return jsonify({"message": "Account deleted successfully."}), 200

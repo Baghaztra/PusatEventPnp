@@ -223,7 +223,7 @@ def poster_update():
 
         else:
             return jsonify({'message': 'No file provided'}), 400
-        ...
+        
     except Exception as e:
         print("error deleting event",e)
         return jsonify({'message': str(e)}), 500
@@ -254,8 +254,86 @@ def event_update():
         else:    
             return jsonify({'message': "Only creator can update this"}), 401
     except Exception as e:
-        print("error deleting event",e)
+        print("error updating event",e)
         return jsonify({'message': str(e)}), 500
+    
+@eo_bp.route('/update/profile', methods=['PATCH'])
+@jwt_required()
+def profile_update():
+    try:
+        identity = get_jwt_identity()
+        
+        role = identity.get('role')
+        if (role != 'event organizer'):
+            return jsonify({'message': "User is not an eo"}), 401
+        
+        user_id = identity.get('user_id')
+        eo = EventOrganizer.query.get(user_id)
+        if (not eo):
+            return jsonify({'message': "Eo not found"}), 404
+        
+        key = request.json.get('key')
+        value = request.json.get('value')
+        if hasattr(eo, key): 
+            setattr(eo, key, value) 
+            db.session.commit() 
+            return jsonify({'message': "Profile updated."}), 200
+        else:
+            return jsonify({'message': f"Invalid field: {key}"}), 400
+        
+    except Exception as e:
+        print("error updating profile",e)
+        return jsonify({'message': str(e)}), 500
+    
+@eo_bp.route('/file/update-profile-picture', methods=['PATCH'])
+@jwt_required()
+def update_pfp():
+    try:
+        # Mendapatkan identitas pengguna dari JWT
+        identity = get_jwt_identity()
+        user_id = identity.get('user_id')
+        user = EventOrganizer.query.get(user_id)
+
+        # Pastikan pengguna ada di database
+        if not user:
+            return jsonify({'message': 'EO not found'}), 404
+
+        # Pastikan file dikirimkan dalam request
+        if 'profile_picture' not in request.files:
+            return jsonify({'message': 'No file provided'}), 400
+
+        file = request.files['profile_picture']
+
+        # Validasi nama file
+        if file.filename == '':
+            return jsonify({'message': 'No selected file'}), 400
+
+        # Validasi format file (misalnya hanya menerima gambar)
+        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+        if '.' not in file.filename or file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+            return jsonify({'message': 'Invalid file type. Only images are allowed.'}), 400
+
+        # Hapus gambar lama jika ada
+        if user.profile_picture and os.path.exists(user.profile_picture.replace('http://localhost:5000/', '')):
+            os.remove(user.profile_picture.replace('http://localhost:5000/', ''))
+
+        # Simpan file dengan nama aman
+        filename = secure_filename(file.filename)
+        upload_path = os.path.join('uploads', 'eo_pfp', filename)
+
+        # Pastikan direktori tujuan ada
+        os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+        file.save(upload_path)
+
+        # Update URL di database
+        pfp_url = f'http://localhost:5000/uploads/eo_pfp/{filename}'
+        user.profile_picture = pfp_url
+        db.session.commit()
+
+        return jsonify({'message': 'Profile picture updated successfully', 'profile_picture_url': pfp_url}), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
     
 @eo_bp.route('/file/upload/<id>', methods=['POST'])
 def event_file_upload(id):
